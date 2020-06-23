@@ -1,0 +1,98 @@
+import random
+import exstr
+import ^ hinter
+import ^ storage
+import ^ scorer
+
+typedef ^storage:WordPair WordPair
+
+struct Game
+    *words @array|WordPair
+    *learnCounter @int 0
+    *storage @^storage:Storage
+    *scorer @^scorer:Scorer
+    *hinter @^hinter:Hinter
+
+def hint
+    mref game:Game
+    game.hinter @^hinter:get_hint 
+    
+def print_files
+    mref game:Game
+    @print* "default.txt, verbs.txt" "\n"
+
+def update_words
+    mref game:Game
+    game.words game.storage @^storage:get_words_copy
+    game.words @random:shuffle
+
+def set_file
+    mref game:Game
+    cref line:string
+    if *b @bool in b game.storage @set_file line
+        game @update_words
+        game @place_word
+    
+def init
+    mref game:Game
+    game.storage @^storage:init
+
+def _get_next_word
+    mref word:WordPair game:Game
+    *sz @int @size game.words
+    if sz 0
+        game @update_words
+    game.words @add game.words|0
+    word = game.words|0
+    game.words @erase 0
+
+def place_word
+    mref game:Game
+    *wordPair game @WordPair @_get_next_word
+    game.hinter @^hinter:set_word wordPair.answer
+    game.scorer @^scorer:update_time
+    @print* "Word: " wordPair.question "\n"
+
+def _learn_test
+    mref game:Game
+    cref word:string
+    if *b @bool in b @^hinter:guess_right game.hinter word
+        game.learnCounter - 1
+        if > game.learnCounter 0
+            @print* game.learnCounter " times remains\n"
+        else
+            game @place_word
+    
+def _game_test
+    mref game:Game
+    cref word:string
+    if *b @bool in b @^hinter:guess_right game.hinter word
+        *score; *bonus @int 0
+        *len @int @size game.hinter.word
+        score bonus game.scorer @^scorer:get_score_n_bonus len game.hinter.index
+        game.words @erase -1
+        @print* "Yes. Your bonus is: " bonus ". Your score: " score "\n"
+        game @place_word
+    else
+        @print "No\n"
+
+def test
+    mref game:Game
+    cref line:string
+    *word @string @exstr:strip line
+    if > game.learnCounter 0
+        game @_learn_test word
+    else
+        game @_game_test word
+    
+def get_word
+    mref game:Game
+    cref line:string
+    game.learnCounter = 3
+    *word @string @exstr:strip line    
+    if *b @bool in b @isdigit word
+        *times @int @from_string word
+        if > times game.learnCounter
+            game.learnCounter = times
+    *answer @string @^hinter:get_word game.hinter
+    @print* answer ". Enter the word " game.learnCounter " times.\n"

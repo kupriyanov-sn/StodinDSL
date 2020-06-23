@@ -1,0 +1,82 @@
+import exstr
+import fileinfo
+
+struct WordPair
+    *question @string
+    *answer @string
+
+struct Storage
+    *words @array|WordPair
+    *dirName @string
+    *fileName @string
+
+def _load_words
+    mref data:array|WordPair
+    cref fileName:string
+    *f @file @set_mode "r" @open fileName
+    for
+        *s @string
+        s f @getline
+        if != s ""
+            *pos @int @find s ":"
+            *answer @string @substr s 0 pos @exstr:strip
+            pos + 1
+            *question @string @substr s pos @exstr:strip
+            data|* = question answer
+        else
+            break
+    f @close 
+
+def _parse_words
+    mref storage:Storage
+    storage.words @clear
+    storage.words @_load_words storage.fileName
+
+def set_data
+    mref storage:Storage
+    storage @_parse_words
+
+def _save_settings
+    cref storage:Storage
+    *exeFile @string @get_application_arg 0
+    *settingsFile @string @fileinfo:get_dir exeFile @fileinfo:join "settings.txt"
+    *f @file @set_mode "w" @open settingsFile
+    f @write* storage.fileName
+    f @close
+
+def set_file
+    mref res:bool storage:Storage
+    cref fileName:string
+    *fName @string @exstr:strip fileName + ".txt"
+    storage.fileName @fileinfo:join storage.dirName fName
+    if *b @bool in b @fileinfo:file_exists storage.fileName
+        storage @set_data
+        @_save_settings storage
+        res = true
+    else
+        @print "File doesn't exist!\n"
+        res = false
+
+def _load_settings
+    mref storage:Storage
+    *exeFile @string @get_application_arg 0
+    storage.dirName @fileinfo:get_dir exeFile @fileinfo:join "words"
+    *settingsFile @string @fileinfo:get_dir exeFile @fileinfo:join "settings.txt"
+    if *b @bool in b @fileinfo:file_exists settingsFile
+        *f @file @set_mode "r" @open settingsFile
+        storage.fileName f @getline 
+        storage.fileName @exstr:strip
+        ifnot *b @bool in b @fileinfo:file_exists storage.fileName
+            storage.fileName @fileinfo:join storage.dirName "default.txt"
+    else
+        storage.fileName @fileinfo:join storage.dirName "default.txt"
+
+def init
+    mref storage:Storage
+    *exeFile @string @get_application_arg 0
+    storage @_load_settings
+    storage @set_data
+
+def get_words_copy
+    mref words:array|WordPair storage:Storage
+    words = storage.words

@@ -1,0 +1,29 @@
+struct Hinter
+    *word @string ""
+    *index @int 0
+    
+def get_hint
+    mref hinter:Hinter
+    *sz @int @size hinter.word - hinter.index
+    if > sz 3
+        hinter.index + 1
+        *h @string @substr hinter.word 0 hinter.index
+        @print* "hint: " h "\n"
+    else
+        @print "no hints more!\n"
+        
+def set_word
+    mref hinter:Hinter
+    cref word:string
+    hinter.word = word
+    hinter.index = 0
+    
+def get_word
+    mref word:string 
+    cref hinter:Hinter
+    word = hinter.word
+    
+def guess_right
+    mref res:bool
+    cref hinter:Hinter word:string
+    res == word hinter.word

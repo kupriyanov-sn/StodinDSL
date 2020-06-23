@@ -1,0 +1,19 @@
+CC=g++
+CFLAGS= -std=c++14 -Wall -fexceptions -std=c++14  -c 
+LIBS=
+LFLAGS= -static-libstdc++ -static-libgcc -static -s -static-libstdc++ -static-libgcc -static
+SRC=../compile
+OBJECTS=auxiliary.o parser_check.o parser_expr.o parser_stmt.o\
+lexer.o parser.o parser_error.o parser_ops.o main.o
+all: project
+project: $(OBJECTS)
+	$(CC) $(LFLAGS) $(LIBS) $(OBJECTS) -o compile
+%.o:  $(SRC)/%.cpp 
+	$(CC) $(CFLAGS) $< 
+DEPS = $(OBJECTS:.o=.d)
+ifneq ($(MAKECMDGOALS),clean)
+-include $(DEPS)
+endif
+clean:
+	del *.out
+.PHONY : clean

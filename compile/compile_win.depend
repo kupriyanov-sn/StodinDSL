@@ -1,0 +1,137 @@
+# depslib dependency file v1.0
+1592827384 source:c:\stodin\compile\auxiliary.cpp
+	<sys/stat.h>
+	<unistd.h>
+	<windows.h>
+	"auxiliary.h"
+
+1591098126 c:\stodin\compile\auxiliary.h
+	<string>
+	<sstream>
+	<iostream>
+	<fstream>
+	<algorithm>
+	<exception>
+	<iterator>
+	<sys/types.h>
+
+1592475710 source:c:\stodin\compile\lexer.cpp
+	<sstream>
+	<algorithm>
+	<iostream>
+	"lexer.h"
+
+1590481400 c:\stodin\compile\lexer.h
+	<string>
+	<vector>
+
+1592835928 source:c:\stodin\compile\main.cpp
+	<string>
+	<sstream>
+	<iostream>
+	<fstream>
+	<algorithm>
+	<exception>
+	<iterator>
+	"parser.h"
+	"auxiliary.h"
+	"parser_error.h"
+	<exception>
+	<cstdint>
+	<exception>
+
+1591687906 c:\stodin\compile\parser.h
+	<string>
+	<vector>
+
+1591689444 c:\stodin\compile\parser_error.h
+	<string>
+
+1591688240 source:c:\stodin\compile\parser.cpp
+	<string>
+	<vector>
+	<map>
+	<sstream>
+	<iostream>
+	<fstream>
+	<algorithm>
+	"lexer.h"
+	"parser.h"
+	"parser_check.h"
+	"parser_ops.h"
+	"parser_stmt.h"
+	"parser_expr.h"
+	"parser_error.h"
+
+1590568686 c:\stodin\compile\parser_check.h
+	<string>
+	<vector>
+	<map>
+
+1590564992 c:\stodin\compile\parser_ops.h
+	<string>
+	<vector>
+
+1591688064 c:\stodin\compile\parser_stmt.h
+	<string>
+	<vector>
+
+1591688106 c:\stodin\compile\parser_expr.h
+	<string>
+	<vector>
+
+1592475710 source:c:\stodin\compile\parser_check.cpp
+	<string>
+	<vector>
+	<map>
+	<sstream>
+	<iostream>
+	<fstream>
+	<algorithm>
+	"parser_check.h"
+	"parser_ops.h"
+	"lexer.h"
+	"parser_error.h"
+
+1591689478 source:c:\stodin\compile\parser_error.cpp
+	<vector>
+	<iostream>
+	"parser_error.h"
+
+1592203240 source:c:\stodin\compile\parser_expr.cpp
+	<string>
+	<vector>
+	<map>
+	<sstream>
+	<iostream>
+	<fstream>
+	<algorithm>
+	"parser_ops.h"
+	"parser_check.h"
+	"parser_expr.h"
+	"parser_stmt.h"
+	"parser_error.h"
+
+1591266178 source:c:\stodin\compile\parser_ops.cpp
+	<string>
+	<vector>
+	<map>
+	<sstream>
+	<iostream>
+	<fstream>
+	<algorithm>
+	"parser_ops.h"
+
+1592379356 source:c:\stodin\compile\parser_stmt.cpp
+	<string>
+	<vector>
+	<map>
+	<sstream>
+	<iostream>
+	<fstream>
+	<algorithm>
+	"parser_stmt.h"
+	"parser_check.h"
+	"parser_ops.h"
+	"parser_error.h"
+

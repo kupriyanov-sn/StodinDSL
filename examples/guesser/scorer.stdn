@@ -1,0 +1,34 @@
+import time
+
+struct Scorer
+    *score @int 0
+    *lastTime @int 0
+
+def _calc_bonus
+    mref bonus:int
+    cref tau:int wordLen:int hints:int
+    *t @int wordLen / 4 - tau * -1
+    bonus = 0 - hints
+    *points @array|array|int
+    points|* = 2 5
+    points|* = 7 3
+    points|* = 15 2
+    points|* = 30 1
+    for *p in points
+        if < t p|0
+            bonus + p|1
+            break
+    if < bonus 0
+        bonus = 0
+        
+def get_score_n_bonus
+    mref score:int bonus:int scorer:Scorer
+    cref wordLen:int hints:int
+    *tau @int @time:time - scorer.lastTime
+    bonus @_calc_bonus tau wordLen hints
+    scorer.score + bonus
+    score = scorer.score
+
+def update_time
+    mref scorer:Scorer
+    scorer.lastTime @time:time

@@ -1,0 +1,44 @@
+import exstr
+import ^ game
+
+def get_command_line
+    mref cmd:string line:string
+    *s @string @getline @exstr:strip s
+    *pos @int @find s " "
+    if != pos -1
+        cmd @substr s 0 pos
+        line @substr s pos
+    else
+        cmd = s
+        line = ""
+
+def do_cmd
+    mref res:bool game:^game:Game
+    res = true
+    @print ">>> "
+    *cmd; *line @string 
+    cmd line @get_command_line
+    if cmd "!q"
+        res = false
+    elif cmd "!hint"
+        game @^game:hint
+    elif cmd "!word"
+        game @^game:get_word line
+    elif cmd "!file"
+        game @^game:set_file line
+    elif cmd "!files"
+        game @^game:print_files
+    elif cmd ""
+        for 0
+    else
+        if != line ""
+            cmd + line
+        game @^game:test cmd
+
+def main
+    *game @^game:Game
+    game @^game:init
+    @print "commands: !q !hint !word !file !files\n"
+    game @^game:place_word
+    for *b @bool in b game @do_cmd 
+        for 0

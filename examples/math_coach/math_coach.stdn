@@ -1,0 +1,48 @@
+import random
+import time
+
+def get_multi_question
+    mref a:int b:int answer:int 
+    *v @array|int
+    for a in 12;99;1
+        *c @int a % 10
+        if != c 0
+            v @add a
+    a @random:choice v
+    b @random:randint 3 9
+    answer = a * b
+
+def math_round
+    mref res:bool
+    *tAllStart @int @time:time
+    *counter @int 0
+    for
+        *tStart @int @time:time
+        *a; *b; *answer @int 0
+        a b answer @get_multi_question
+        *strAnswer @string @to_string answer
+        @print* a " * " b "\n"
+        *strRes @string @getline
+        if strRes "q"
+            res = false
+            return
+        if strRes strAnswer
+            @print "True\n"
+            counter + 1
+        else
+            @print* "False! Correct answer is: " answer "\n"
+        *tEnd @int @time:time - tStart
+        @print* "t = " tEnd "\n"
+        if counter 6
+            break
+    *tAllEnd @int @time:time - tAllStart
+    *speed @double tAllEnd$double / counter
+    @print* "speed: " speed "\nEnter to proceed or q to quit: \n"
+    *key @string @getline
+    res != key "q"
+
+def main
+    @print "\nInput an answer or q to quit: \n"
+    for *b @bool in b @math_round
+        for 0
+    

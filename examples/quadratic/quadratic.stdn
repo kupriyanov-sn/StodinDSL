@@ -1,0 +1,26 @@
+import math
+
+def main
+    @print "\nInput args (a, b, c): \n"
+    *a; *b; *c @double 0
+    *flag @bool true
+    flag a; flag? b; flag? c @scan
+    ifnot flag
+        @print "Args error format!\n"
+    elif a 0
+        @print "a = 0. It is not quadratic equation"
+    else
+        *d; *p; *x1; *x2 @double 0
+        p = -4 * a c
+        d = b * b + p
+        if > d 0
+            x1 @math:sqrt d - b / 2 a
+            x2 @math:sqrt d * -1 - b / 2 a
+            @print* "x1 = " x1 "\n"
+            @print* "x2 = " x2 "\n"
+        elif d 0
+            x1 = b / 2 a * -1
+            @print* "x1 = x2 = " x1 "\n"
+        else
+            @print "D < 0, no roots \n"
+    @getch 

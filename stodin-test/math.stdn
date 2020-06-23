@@ -1,0 +1,77 @@
+import math
+
+def add
+    mref res:uint
+    cref num1:uint
+    res + num1
+
+def dec
+    mref res:uint
+    cref num1:uint
+    res - num1
+
+def add_pair
+    mref res:uint
+    cref num1:uint num2:uint
+    res + num1 num2
+
+def double_add
+    mref res1:uint res2:uint
+    cref num1:uint
+    res1 + num1
+    res2 + num1
+
+def trouble_add
+    mref res1:uint res2:uint res3:uint
+    cref num1:uint
+    res1 + num1
+    res2 + num1
+    res3 + num1
+
+def max
+    mref res:uint
+    cref num1:uint num2:uint
+    if > num1 num2
+        res = num1
+    else
+        res = num2
+
+
+def factorial    
+    mref res:double
+    cref n:uint
+    res = 1
+    for *i in n;1;-1
+        res * i
+        
+def factorial2
+    mref res:double
+    cref n:uint
+    if < res 1
+        res = 1
+    if > n 1
+        res * n
+        *nm1 @uint n
+        nm1 - 1
+        res @factorial nm1
+
+def fib
+    mref res:uint
+    cref n:uint
+    res = 0
+    *x @uint 1
+    for *i @uint in 0;n;1
+        *t @uint res
+        res = x
+        x + t
+
+def test_factorial
+    mref res:bool
+    *dRes @double 0
+    res = true
+    *answers @array|double 2.4329e+18 5.10909e+19
+    for *mN in 20;22;1 
+        dRes @factorial mN
+        *idx @int mN - 20
+        res? @math:float_compare dRes answers|idx 0.1
+        #@print* "factorial " mN ": " dRes "\n"

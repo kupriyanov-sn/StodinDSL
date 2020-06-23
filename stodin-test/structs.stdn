@@ -1,0 +1,33 @@
+import ^ math
+
+const SMCNST @int 20
+
+struct OpenStruct
+    *s1 @string "1"
+    *s2 @string "2"
+    *arr @array|string "3" "4"
+
+struct OpenStruct2
+    *s1 @string "1"
+    *s2 @string "1"
+    *s3 @string "1"
+    *s4 @string "1"
+
+struct _StaticStruct
+    *s1 @string "static"
+
+def _static_func
+    mref res:string
+    cref s1:string s2:string
+    res = s1 + s2
+
+def test_static_struct
+    mref res:bool
+    *ss @_StaticStruct
+    res == ss.s1 "static"
+
+def test_static_func
+    mref res:bool
+    *s @string @_static_func "1" "2"
+    res == s "12"
+    

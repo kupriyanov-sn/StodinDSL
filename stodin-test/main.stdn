@@ -1,0 +1,330 @@
+import time
+import math
+import ^ math
+import ^ structs
+import ^ string_test
+import ^cpp local_test
+
+def test_cycles
+    mref res:bool
+    *counter @int 0
+    for 2
+        for 2
+            counter + 1
+    for
+        counter + 1
+        break
+    for 1
+        counter + 1
+    if res
+        for 0 # pass
+    for *i in 10;0;-1
+        counter + 1
+    res == counter 16
+    
+def test_if
+    mref res:bool
+    *counter @int 0
+    if true
+        counter + 1
+        if false
+            counter - 1
+        elif true
+            counter + 1
+    if 5 5
+        counter + 1
+    else
+        counter - 1
+    if > 5 4
+        counter + 1
+    if || true false
+        counter + 1
+    res == counter 5
+
+def some_func
+    mref b1:bool b2:bool
+    cref b3:bool
+    @print* "some_func: " b1 b2 b3 "\n"
+    b1 = b3
+    b2 = b3
+
+def get_size
+    mref sz:int
+    sz = 5
+
+def test_complex_if
+    mref res:bool
+    *counter @int 0
+    if *sz @int in sz @get_size
+        counter + 1
+    *a @int 5
+    if a in 1 4 7
+        counter - 1
+    if a in 1 5 7
+        counter + 1
+    *arr @array|int 1 4 7
+    if a in arr
+        counter - 1
+    arr = 1 5 7
+    if a in arr
+        counter + 1    
+    ifnot false
+        counter + 1
+    ifnot 55 in arr
+        counter + 1
+    arr @clear
+    ifnot *sz @int in sz @size arr
+        counter + 1
+    ifnot 5 in 1 2 3
+        counter + 1
+    res == counter 7
+
+def some_func_2
+    mref b:bool
+    cref s:string
+    b = true
+
+def some_func_3
+    mref b:bool i:int
+    i - 1
+    if < i 1
+        b = false
+    else
+        b = true
+
+def test_complex_for
+    mref res:bool
+    *counter @int 0
+    *i @int 5
+    for *b @bool in b i @some_func_3 
+        counter + 1
+    for *i @int in 2 5 7
+        counter + i
+    res == counter 18
+        
+def test_chain
+    mref res:bool
+    *u1 @uint 8
+    *u2 @uint 3
+    u1 + 7 2 - 3 * 2 + 1 1
+    u2 + 1 2 3
+    u1 @^math:add u2
+    u1 @^math:add* u2 3 4 5 @^math:dec* u2 3 4 5
+    u1; u2 @^math:add_pair 1 2 ; 1 2 @^math:dec* 2 2
+    u1 u2 @^math:double_add 5
+    *u3 @uint 0
+    u1 u2 u3 @^math:trouble_add 5
+    *u4 @uint 0
+    u1 u2; u3 u4 @^math:double_add 5
+    #@print* "double_add+ u1: " u1 "; u2: " u2  "; u3: " u3 "; u4: " u4 "\n"
+    res == u1 56 ? u2 26; u3 10 ; u4 5
+    res ! res
+    res!? = true
+    res == 1 2 !? 4 4
+    *b2; *b3 @bool false
+    b2? res @some_func b3
+
+def test_bool    
+    mref res:bool
+    *b1 @bool true
+    *b2 @bool true
+    *b3 @bool false
+    res == b1 b2
+    res? != b1 b3
+    res? || b2 b3
+    res? || b1 b2 && b3
+    res ! res
+
+def test_bitwise_operators
+    mref res:bool
+    *u1 @u8 0
+    u1 | 1 2 4 8
+    res == u1 15
+
+def test_sizeof
+    mref res:bool
+    *u1 @u64 0
+    *u2 @u8 0
+    u1 @sizeof u1
+    u2 @sizeof u2
+    res == u1 8
+    res? == u2 1
+
+def helper_for_test_struct
+    mref str:string
+    cref os:^structs:OpenStruct2
+    str = "" + os.s1 os.s2 os.s3 os.s4
+
+def test_struct
+    mref res:bool
+    res @^structs:test_static_struct
+    *os @^structs:OpenStruct
+    *s @string + os.s1 os.s2 os.arr|0 os.arr|1
+    res? == "1234" s
+    *os2 @^structs:OpenStruct2 "6" "7" "8" "9"
+    s @helper_for_test_struct os2
+    res? == "6789" s
+
+def test_compare_ops
+    mref res:bool
+    res > 5 4 ? 3 2 ; 1 0
+    res? > 4 5 ; 3 2
+    res ! res
+    res? != 2 0 ; 1 0
+
+def test_array
+    mref res:bool
+    *counter @int 0
+    *v @array|uint 1 1 1
+    for *a in v
+        counter + a
+        for *b in v
+            counter + b
+    v|0 + 5
+    v @add 7
+    for *a in v
+        counter + a  
+    res == counter 27
+    counter = 0
+    for *i in 0;4;1
+        counter + v|i  
+    res? == counter 15
+    v @erase 1
+    counter @size v
+    res? == counter 3
+    *pos @int 0
+    pos @find v 7
+    res? == pos 2   
+    pos @find v 3
+    res? == pos -1
+    *v2 @array|uint
+    for *vi in v
+        v2|* = vi + 10
+    counter = 0
+    for *a in v2
+        counter + a
+    res? == counter 44
+
+def test_dict
+    mref res:bool
+    res = true
+    *m @dict|uint,string @add 1 "1" ; 2 "2" ; 3 "3"
+    for *b in m
+        *s @string @to_string b.first     
+        res? == s b.second
+
+def test_file
+    mref res:bool
+    res = true
+    *f @file @set_mode "w" @open "test.txt"
+    for *i in 0;3;1
+        *s @string @to_string i
+        f @write* s "\n"
+    f @close @set_mode "r" @open "test.txt"
+    for *i in 0;3;1
+        *s1 @string @to_string i
+        *s2 @string
+        s2 f @getline
+        res? == s1 s2
+    f @close 
+
+def test_static_cast
+    mref res:bool
+    *u3 @int 10
+    *d @double u3$double / 3.3
+    res @math:float_compare d 3.030303 0.01
+    u3 = d$int
+    res? == u3 3
+
+const CNST_1 @int 5
+const VCNST @array|int 4 8 14
+const _CNST_2 @int 15
+enum symbols @u8 A=5 B C D
+enum _symbols2 @u8 A B C D
+
+def test_consts
+    mref res:bool
+    res == CNST_1 5 ? _CNST_2  15 ? ^structs:SMCNST 20
+    # test enum
+    *enumD @symbols symbols^D
+    res? == enumD symbols^D
+    res? == enumD$int 8
+
+typedef array|int arrInt
+typedef ^structs:OpenStruct2 _OStruct2
+typedef array|^structs:OpenStruct2 _arrOs2
+typedef dict|string,int _dctStr
+
+def test_multidimensional_containers
+    mref res:bool
+    #*aIntInt @array|arrInt @resize 3
+    *aIntInt @array|array|int @resize 3
+    for *aInt in aIntInt
+        aInt @add* 3 5 8
+    aIntInt|* = 4 5 6
+    aIntInt|3|* = 7
+    aIntInt|1|1 + 10
+    res == aIntInt|1|1 15 ? aIntInt|3|3 7
+    #*ssDict @dict|string,dctStr
+    *ssDict @dict|string,dict|string,int
+    *sDict @dict|string,int @add "1" 1; "2" 2; "3" 3
+    ssDict @add "01" sDict; "02" sDict; "03" sDict
+    ssDict|*"04" @add "4" 4
+    ssDict|"04"|*"5" = 5
+    res? == ssDict|"02"|"3" 3 ? ssDict|"04"|"4" 4 ? ssDict|"04"|"5" 5
+
+def test_exceptions
+    mref res:bool
+    *arr @array|int 1 2 3 4
+    *counter @int 0
+    try
+        arr|12 = 3
+    catch out_of_range e
+        counter + 1
+    res = false
+    try
+        throw domain_error "test domain_error"
+    catch domain_error e
+        counter + 1
+    try
+        assert > 1 2
+    catch logic_error e
+        counter + 1
+    res == counter 3
+
+def main 
+    *tests @dict|string,bool
+    tests|*"array test" @test_array
+    tests|*"bitwise operators test" @test_bitwise_operators
+    tests|*"bool test" @test_bool
+    tests|*"c++ test" @^local_test:test
+    tests|*"chain test" @test_chain
+    tests|*"compare ops test" @test_compare_ops
+    tests|*"complex for test" @test_complex_for
+    tests|*"complex if test" @test_complex_if
+    tests|*"cycles test" @test_cycles
+    tests|*"consts test" @test_consts
+    tests|*"dict test" @test_dict
+    tests|*"exceptions test" @test_exceptions
+    tests|*"file test" @test_file
+    tests|*"factorial test" @^math:test_factorial
+    tests|*"if test" @test_if
+    tests|*"multidimensional containers test" @test_multidimensional_containers
+    tests|*"sizeof test" @test_sizeof
+    tests|*"static cast test" @test_static_cast
+    tests|*"string test" @^string_test:test
+    tests|*"struct test" @test_struct
+    for *pair in tests
+        @print* pair.first ": " pair.second "\n"  
+    *allTestCount @int @size tests
+    *successfulTests @int 0
+    for *pair in tests
+        if pair.second
+            successfulTests + 1
+    @print* "All tests: " successfulTests "/" allTestCount "\n"
+    @print "Проверка вывода кириллицы (only for Linux and Russian version of Windows)\n"
+    # test translator errors
+    #test.test i
+    #test.test() = i
+    #@test.test() i
+    #= i

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="stodin-lib" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/stodin-lib" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Wextra" />
+					<Add option="-Wall" />
+					<Add option="-std=c++14" />
+					<Add option="-g" />
+					<Add directory="./" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/stodin-lib" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-std=c++14" />
+					<Add directory="./" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-std=c++14" />
+			<Add option="-fexceptions" />
+		</Compiler>
+		<Unit filename="__stodin_array.h" />
+		<Unit filename="__stodin_common.cpp" />
+		<Unit filename="__stodin_common.h" />
+		<Unit filename="__stodin_dict.h" />
+		<Unit filename="__stodin_file.cpp" />
+		<Unit filename="__stodin_file.h" />
+		<Unit filename="__stodin_io.cpp" />
+		<Unit filename="__stodin_io.h" />
+		<Unit filename="__stodin_safe.cpp" />
+		<Unit filename="__stodin_safe.h" />
+		<Unit filename="__stodin_string.cpp" />
+		<Unit filename="__stodin_string.h" />
+		<Unit filename="_stodin_lib_exstr.cpp" />
+		<Unit filename="_stodin_lib_exstr.h" />
+		<Unit filename="_stodin_lib_fileinfo.cpp" />
+		<Unit filename="_stodin_lib_fileinfo.h" />
+		<Unit filename="_stodin_lib_math.cpp" />
+		<Unit filename="_stodin_lib_math.h" />
+		<Unit filename="_stodin_lib_random.cpp" />
+		<Unit filename="_stodin_lib_random.h" />
+		<Unit filename="_stodin_lib_time.cpp" />
+		<Unit filename="_stodin_lib_time.h" />
+		<Unit filename="main.cpp" />
+		<Extensions>
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

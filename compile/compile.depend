@@ -1,0 +1,210 @@
+# depslib dependency file v1.0
+1519490208 source:/home/sergey/StoreRoom/cpp/compile/main.cpp
+	<string>
+	<vector>
+	<map>
+	<sstream>
+	<iostream>
+	<fstream>
+	<algorithm>
+	<cstdint>
+	<string>
+	<iostream>
+
+1586276003 
+
+1588867413 source:/home/sergey/StoreRoom/cpp/stodin/compile/main.cpp
+	<string>
+	<vector>
+	<map>
+	<sstream>
+	<iostream>
+	<fstream>
+	<algorithm>
+	<cstdint>
+	<string>
+	<iostream>
+	<string>
+	<sstream>
+	<iostream>
+	<fstream>
+	<algorithm>
+	<exception>
+	<iterator>
+	<sys/types.h>
+	<sys/stat.h>
+	<unistd.h>
+	<windows.h>
+	"parser.h"
+	<exception>
+	<cstdint>
+	<cwchar>
+
+1592210141 source:d:\storeroom\cpp\stodin\compile\main.cpp
+	<string>
+	<sstream>
+	<iostream>
+	<fstream>
+	<algorithm>
+	<exception>
+	<iterator>
+	"parser.h"
+	"auxiliary.h"
+	"parser_error.h"
+	<exception>
+	<cstdint>
+	<exception>
+
+1590481398 d:\storeroom\cpp\stodin\compile\lexer.h
+	<string>
+	<vector>
+
+1592475709 source:d:\storeroom\cpp\stodin\compile\lexer.cpp
+	<sstream>
+	<algorithm>
+	<iostream>
+	"lexer.h"
+
+1591687904 d:\storeroom\cpp\stodin\compile\parser.h
+	<string>
+	<vector>
+
+1591688239 source:d:\storeroom\cpp\stodin\compile\parser.cpp
+	<string>
+	<vector>
+	<map>
+	<sstream>
+	<iostream>
+	<fstream>
+	<algorithm>
+	"lexer.h"
+	"parser.h"
+	"parser_check.h"
+	"parser_ops.h"
+	"parser_stmt.h"
+	"parser_expr.h"
+	"parser_error.h"
+
+1588861939 source:/home/sergey/StoreRoom/cpp/stodin/compile/lexer.cpp
+	<sstream>
+	<algorithm>
+	<iostream>
+	"lexer.h"
+
+1537766394 /home/sergey/StoreRoom/cpp/stodin/compile/lexer.h
+	<string>
+	<vector>
+
+1586276004 /home/sergey/StoreRoom/cpp/stodin/compile/parser.h
+	<string>
+	<vector>
+
+1588861989 source:/home/sergey/StoreRoom/cpp/stodin/compile/parser.cpp
+	<string>
+	<vector>
+	<map>
+	<sstream>
+	<iostream>
+	<fstream>
+	<algorithm>
+	"lexer.h"
+	"parser.h"
+
+1591098495 source:d:\storeroom\cpp\stodin\compile\auxiliary.cpp
+	<sys/stat.h>
+	<unistd.h>
+	<windows.h>
+	"auxiliary.h"
+
+1591098124 d:\storeroom\cpp\stodin\compile\auxiliary.h
+	<string>
+	<sstream>
+	<iostream>
+	<fstream>
+	<algorithm>
+	<exception>
+	<iterator>
+	<sys/types.h>
+
+1590568684 d:\storeroom\cpp\stodin\compile\parser_check.h
+	<string>
+	<vector>
+	<map>
+
+1592475709 source:d:\storeroom\cpp\stodin\compile\parser_check.cpp
+	<string>
+	<vector>
+	<map>
+	<sstream>
+	<iostream>
+	<fstream>
+	<algorithm>
+	"parser_check.h"
+	"parser_ops.h"
+	"lexer.h"
+	"parser_error.h"
+
+1591688062 d:\storeroom\cpp\stodin\compile\parser_stmt.h
+	<string>
+	<vector>
+
+1591266176 source:d:\storeroom\cpp\stodin\compile\parser_ops.cpp
+	<string>
+	<vector>
+	<map>
+	<sstream>
+	<iostream>
+	<fstream>
+	<algorithm>
+	"parser_ops.h"
+
+1590564991 d:\storeroom\cpp\stodin\compile\parser_ops.h
+	<string>
+	<vector>
+
+1592379354 source:d:\storeroom\cpp\stodin\compile\parser_stmt.cpp
+	<string>
+	<vector>
+	<map>
+	<sstream>
+	<iostream>
+	<fstream>
+	<algorithm>
+	"parser_stmt.h"
+	"parser_check.h"
+	"parser_ops.h"
+	"parser_error.h"
+
+1591688105 d:\storeroom\cpp\stodin\compile\parser_expr.h
+	<string>
+	<vector>
+
+1592203238 source:d:\storeroom\cpp\stodin\compile\parser_expr.cpp
+	<string>
+	<vector>
+	<map>
+	<sstream>
+	<iostream>
+	<fstream>
+	<algorithm>
+	"parser_ops.h"
+	"parser_check.h"
+	"parser_expr.h"
+	"parser_stmt.h"
+	"parser_error.h"
+
+1591686941 source:d:\storeroom\cpp\stodin\compile\parcer_error.cpp
+	<vector>
+	"parcer_error.h"
+
+1591686931 d:\storeroom\cpp\stodin\compile\parcer_error.h
+	<string>
+
+1591689443 d:\storeroom\cpp\stodin\compile\parser_error.h
+	<string>
+
+1591689476 source:d:\storeroom\cpp\stodin\compile\parser_error.cpp
+	<vector>
+	<iostream>
+	"parser_error.h"
+

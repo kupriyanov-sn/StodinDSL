@@ -1,0 +1,13 @@
+def test
+    mref res:bool
+    res = true
+    *s @string "stodin string"
+    s + " test"
+    s + "!"
+    *i @int 0
+    i @find s "test"
+    if != i 14
+        res && false
+    i @find s "---"
+    if != i -1
+        res && false
