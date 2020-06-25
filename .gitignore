@@ -9,6 +9,7 @@
 *.docstates
 
 # Documents
+*.odt#
 
 # c++
 .o
