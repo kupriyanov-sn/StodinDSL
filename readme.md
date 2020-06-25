@@ -89,16 +89,19 @@ Although Stodin can in many cases replace a general-purpose language, it is clos
 
 1. The features used in DSL: chain syntax, the absence of blocks of code allocated by parentheses, translation into another programming language.
 2. Stodin has a number of restrictions introduced for simplicity, conciseness, and to reduce the necessity of frequent syntax changes:
-2.1. The language has no priority system.
-2.2. The language is completely free of brackets: round, square, curly, angular, as well as words that replace them (begin, end).
-2.3. Stodin DSL does not have metaprogramming capabilities. Including there is no possibility of developing templates in the C++ style, although customization of the type of templates from libraries is available.
-2.4. There are no features for functional programming.
-2.5. There is no way to create custom classes with inheritance, encapsulation and polymorphism, although you can use classes from libraries.
-2.6. There is no special unsafe mode. Instead, it uses the connection of files with C++ code.
-2.7. No memory management required. The care of allocating and freeing memory is passed on to libraries.
+..1. The language has no priority system.
+..2. The language is completely free of brackets: round, square, curly, angular, as well as words that replace them (begin, end).
+..3. Stodin DSL does not have metaprogramming capabilities. Including there is no possibility of developing templates in the C++ style, although customization of the type of templates from libraries is available.
+..4. There are no features for functional programming.
+..5. There is no way to create custom classes with inheritance, encapsulation and polymorphism, although you can use classes from libraries.
+..6. There is no special unsafe mode. Instead, it uses the connection of files with C++ code.
+..7. No memory management required. The care of allocating and freeing memory is passed on to libraries.
 
 Stodin's limitations allowed him to come nearer to laconicism in the Python language, despite the presence of static typing. If on relatively small programs the Stodin code is more than Python code by characters (about 1.5 times), then on medium and large programs it can become even. Python achieves conciseness through ingenious constructs that are very difficult to distribute throughout the code. Stodin simply saves on brackets and uses chain syntax, as a result of which a comparable conciseness is achieved without additional labor costs.
- 3. Syntax and semantics.
+
+
+## 3. Syntax and semantics.
+
 A quick look at the example in Chapter 1 suggests that the Stodin syntax is close to the Python syntax. In fact, only the indented system is common to these languages  (indentation is always 4 spaces in Stodin, unlike Python), as well as some keywords. The main differences from most modern languages (except for those mentioned in chapter 1) are as follows:
 
 1. Functions do not have return values. Instead, references are used.
@@ -146,7 +149,9 @@ res? == u3 3
 Here the expression will be evaluated if the res variable is true.
 
 In practice, chains are not used very often, usually in arithmetic expressions or in functions like @print. 
- 4. Variables and standard types.
+
+## 4. Variables and standard types.
+
 Creation of a variable is marked with *, and then its type and value follow: 
 ```
 *a @int 5
@@ -162,7 +167,7 @@ Variables in Stodin code (unlike constants) can only be created inside functions
 Standard types that do not require connecting modules are shown in the table below: 
 
 |Stodin type |     C++ type    |            Comment              |
-| ---------- |:---------------:| -------------------------------:|
+|:----------:|:---------------:|:-------------------------------:|
 | uint       | uint64_t        |                                 |
 | int        | int64_t         |                                 |
 | u64        | uint64_t        |                                 |
@@ -194,6 +199,7 @@ res? == u3 3
 ```
 
 ## 5. Functions.
+
 The function header is generally written in three lines, using the keywords: def, mref, cref. After def is the name of the function, after mref is a list of links to mutable variables (accumulators) with types, after cref, constant links with types. When using the function, batteries are written on the left of the header, constant links on the right. For example: 
 
 ```python
@@ -212,7 +218,7 @@ a b @double_add* c d e f
 @print* a b c "\n"
 ```
 2. As for comparison operators, the separator “?” Can be used in function chains or "!?".
-3. To create encapsulated functions, just underline the heading:  def _double_add
+3. To create encapsulated functions, just underline the heading:  `def _double_add`
 Encapsulated functions should be placed above their place of use. Open functions can be located everywhere. 
 
 ## 6. Branch operators.
@@ -255,7 +261,7 @@ for *a in b c d
 for *b @bool in b @some_func c
 ```
 
-`for` without parameters sets an infinite loop .
+`for` without parameters sets an infinite loop.
 `for 0` is an empty statement.
 `for 1` defines a block of code that can have its own local variables.
 `for n` sets the loop executing n times .
@@ -263,9 +269,10 @@ for *b @bool in b @some_func c
 `for *i @uint in 0;10;1` defines a cycle in which the variable "i" of a given type changes from the variable (constant) "begin" to the variable (constant) "end" with the step "step". 
 `for *a in v` defines a cycle in which the variable a changes in accordance with the values of the array v.
 `for *a in b c d`  defines a loop in which the variable a goes around the list of variables. 
-`for *b @bool in b @some_func c` sets the loop that runs while the variable b is true. The value of the variable is determined by the @some_func function .
+`for *b @bool in b @some_func c` sets the loop that runs while the variable b is true. The value of the variable is determined by the `@some_func function`.
 
 ## 8. Constants and Enumerations (enum).
+
 Declarations of constants are given below:
 
 ```
@@ -288,7 +295,7 @@ res == enumD symbols^D
 res == enumD$int 8
 ```
 
-## 9. Structures
+## 9. Structures.
 
 Examples of structures are given below:
 
@@ -319,20 +326,29 @@ A structure whose type begins to underline is available only in the module in wh
 
 Stodin has three standard containers that do not require plug-ins: string, array, and dictionary.
 An array is created as follows :
+
 `*v @array|uint 1 2 4`
+
 Here, the name of the array consists of at least two parts, separated by the symbol |. The name is followed by an initialization list specifying the number and value of array elements.
 An appeal to an array element can be as follows:
+
 `v|0 + 5`
+
 Here, the number 5 is added to the zero element of the array.
 An array can have a more complex structure: 
+
 `*aIntInt @array|array|int @resize 3 `
-This is an array of arrays. It cannot be initialized with simple values at creation. Only a list of already created arrays. You can set its size using the @resize function. In addition, you can fill in an array of arrays (just like an array) as follows:
+
+This is an array of arrays. It cannot be initialized with simple values at creation. Only a list of already created arrays. You can set its size using the `@resize` function. In addition, you can fill in an array of arrays (just like an array) as follows:
+
 `aIntInt|* = 4 5 6 `
+
 This construct creates a new array element using a list of values. If we continue this expression with a chain of functions, then it will change this last element of the array.
 Dictionaries are created like this: 
+
 `*m @dict|uint,string @add 1 "1" ; 2 "2" ; 3 "3"`
 
-That is, after the sign | it is required to specify a pair of types for the key-value, separated by commas without spaces. A dictionary cannot be initialized with simple values at creation. Therefore, in the above example, the @add function is used.
+That is, after the sign | it is required to specify a pair of types for the key-value, separated by commas without spaces. A dictionary cannot be initialized with simple values at creation. Therefore, in the above example, the `@add` function is used.
 You can access a dictionary element as well as an array element. You can get around the elements of the dictionary that we created above: 
 
 ```python
@@ -340,6 +356,7 @@ for *b in m
     *s @string @to_string b.first     
     res? == s b.second
 ```
+
 You can fill out the dictionary in the following way:
 
 ```python
@@ -359,7 +376,9 @@ ssDict|*"04" @add "4" 4
 ssDict|"04"|*"5" = 5
 ```
 Dictionary dictionary has a difficult to read type. To simplify, you can use the typedef operator:
-typedef dict|string,int dctStr
+
+`typedef dict|string,int dctStr`
+
 `*ssDict @dict|string,dctStr`
 
 Using a string in Stodin is almost the same as using std::string. The only difference is that in Stodin there are no separate quotes for the character. Each double-quoted single-character literal is converted to a character during translation.
