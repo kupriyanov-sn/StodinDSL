@@ -89,13 +89,14 @@ Although Stodin can in many cases replace a general-purpose language, it is clos
 
 1. The features used in DSL: chain syntax, the absence of blocks of code allocated by parentheses, translation into another programming language.
 2. Stodin has a number of restrictions introduced for simplicity, conciseness, and to reduce the necessity of frequent syntax changes:
-..1. The language has no priority system.
-..2. The language is completely free of brackets: round, square, curly, angular, as well as words that replace them (begin, end).
-..3. Stodin DSL does not have metaprogramming capabilities. Including there is no possibility of developing templates in the C++ style, although customization of the type of templates from libraries is available.
-..4. There are no features for functional programming.
-..5. There is no way to create custom classes with inheritance, encapsulation and polymorphism, although you can use classes from libraries.
-..6. There is no special unsafe mode. Instead, it uses the connection of files with C++ code.
-..7. No memory management required. The care of allocating and freeing memory is passed on to libraries.
+
+* The language has no priority system.
+* The language is completely free of brackets: round, square, curly, angular, as well as words that replace them (begin, end).
+* Stodin DSL does not have metaprogramming capabilities. Including there is no possibility of developing templates in the C++ style, although customization of the type of templates from libraries is available.
+* There are no features for functional programming.
+* There is no way to create custom classes with inheritance, encapsulation and polymorphism, although you can use classes from libraries.
+* There is no special unsafe mode. Instead, it uses the connection of files with C++ code.
+* No memory management required. The care of allocating and freeing memory is passed on to libraries.
 
 Stodin's limitations allowed him to come nearer to laconicism in the Python language, despite the presence of static typing. If on relatively small programs the Stodin code is more than Python code by characters (about 1.5 times), then on medium and large programs it can become even. Python achieves conciseness through ingenious constructs that are very difficult to distribute throughout the code. Stodin simply saves on brackets and uses chain syntax, as a result of which a comparable conciseness is achieved without additional labor costs.
 
