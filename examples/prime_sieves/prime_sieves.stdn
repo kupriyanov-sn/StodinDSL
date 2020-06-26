@@ -115,10 +115,10 @@ def main
 # only 3 functions, without comments and endlines, 4 white spaces for nim
 #
 # python	1419
-# go	2168
 # stodin	2193
-# nim-4	2241
-# d	2298
-# rust	2460
-# java	2558
-# c	2944
+# nim-4	    2241
+# d	        2298
+# rust	    2460
+# go	    2660
+# java	    2855
+# c	        2944
