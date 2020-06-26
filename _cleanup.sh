@@ -10,6 +10,9 @@ rm -f examples/math_coach/*.exe
 rm -rf examples/quadratic/stodin-out
 rm -f examples/quadratic/*.exe
 
+rm -rf examples/prime_sieves/stodin-out
+rm -f examples/prime_sieves/*.exe
+
 rm -f stodin-compiler/compile
 rm -f stodin-compiler/config.cfg
 

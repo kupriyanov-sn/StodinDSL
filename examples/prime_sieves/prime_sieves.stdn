@@ -1,0 +1,124 @@
+import math
+
+def eratosthenes
+    mref counter:int maxPrime:int
+    cref limit:int
+    
+    counter = 0
+    maxPrime = 2    
+    *nums @array|u8 @resize limit
+    for *a in nums
+        a = 1
+    nums|0; nums|1 = 0    
+    *dlimit @double @math:sqrt limit$double + 1.5
+    
+    for *i @int in 2; dlimit$int; 1
+        if nums|i
+            *start @int i * i
+            for *j @int in start;limit;i
+                nums|j = 0
+    for *i @int in 0;limit;1
+        if nums|i
+            counter + 1
+            maxPrime = i
+
+def iprimes2
+    mref counter:int maxPrime:int
+    cref limit:int    
+
+    counter = 1
+    maxPrime = 7
+    *lmtbf @int limit - 3 / 2 + 1
+    *nums @array|u8 @resize lmtbf
+    for *a in nums
+        a = 1
+    *end @double @math:sqrt limit - 3 / 2 + 1
+    for *i @int in 0; end$int; 1
+        if nums|i
+            *p @int i + i 3
+            *s @int i + 1
+            s * p + i
+            for *j @int in s; lmtbf; p
+                nums|j = false
+    
+    for *i @int in 0;lmtbf;1
+        if nums|i
+            counter + 1
+            maxPrime = i + i 3
+
+def primes235
+    mref counter:int maxPrime:int
+    cref limit:int    
+
+    counter = 3
+    maxPrime = 7
+    *modPrimes @array|int 7 11 13 17 19 23 29 31
+    *gaps @array|int 4 2 4 2 4 6 2 6 4 2 4 2 4 6 2 6
+    *ndxs @array|int 0 0 0 0 1 1 2 2 2 2 3 3 4 4 4 4 5 5 5 5 5 5 6 6 7 7 7 7 7 7
+    *lmtbf @int limit + 23 / 30 * 8
+    *d @double @math:sqrt limit$double - 7
+    *lmtsqrt @int d$int
+    *fIndex @int lmtsqrt % 30
+    lmtsqrt / 30 * 8 + ndxs|fIndex + 1
+    *nums @array|u8 @resize lmtbf
+    for *a in nums
+        a = 1
+    for *i @int in 0; lmtsqrt; 1
+        if nums|i
+            *ci @int i & 7
+            *p @int i >> 3 * 30 + modPrimes|ci
+            *s @int p * p - 7
+            *p8 @int p << 3
+            for *j @int in 0; 8; 1
+                *sMod30 @int s % 30
+                *c @int s / 30 * 8 + ndxs|sMod30
+                for *jj @int in c; lmtbf; p8
+                    nums|jj = 0
+                *t @int p * gaps|ci
+                s + t
+                ci + 1
+    *ndxsIdx @int limit - 7 % 30 
+    *end @int ndxs|ndxsIdx + lmtbf - 7
+    for *i @int in 0; end; 1
+        if nums|i
+            counter + 1
+            *idx @int i & 7
+            maxPrime = i >> 3 * 30 + modPrimes|idx
+
+
+def main
+    *counter; *maxPrime @int 0
+    counter maxPrime @eratosthenes 1024
+    assert counter 172
+    assert maxPrime 1021
+    @print* "eratosthenes, counter: " counter ", maxPrime: " maxPrime "\n"
+    counter maxPrime @iprimes2 1024
+    assert counter 172
+    assert maxPrime 1021
+    @print* "iprimes2, counter: " counter ", maxPrime: " maxPrime "\n"
+    counter maxPrime @primes235 1024
+    assert counter 172
+    assert maxPrime 1021
+    @print* "primes235, counter: " counter ", maxPrime: " maxPrime "\n\n"
+    
+    for *a @int in 10 20 100 2000 
+        counter maxPrime @eratosthenes a
+        @print* "eratosthenes(" a "), counter: " counter ", maxPrime: " maxPrime "\n"
+        counter maxPrime @iprimes2 a
+        @print* "iprimes2(" a "), counter: " counter ", maxPrime: " maxPrime "\n"
+        counter maxPrime @primes235 a
+        @print* "primes235(" a "), counter: " counter ", maxPrime: " maxPrime "\n\n"
+    
+
+#https://github.com/cedelmaier/primeSieveProjects
+# a symbol estimate
+# only 3 functions, without comments and endlines, 4 white spaces for nim
+#
+# python	1419
+# go	2168
+# stodin	2193
+# nim-4	2241
+# d	2298
+# rust	2460
+# java	2558
+# c	2944
