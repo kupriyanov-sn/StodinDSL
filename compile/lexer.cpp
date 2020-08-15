@@ -149,7 +149,7 @@ void parse_token(const string inputString, vector<string> &tokens, string &error
     for(size_t i = 0; i < inputString.length(); ++i)
     {
         char c = inputString[i];
-        if(c == '\"' )
+        if((c == '\"') || (c == '\'') )
         {
             int slashCount = 0;
             quotes++;
@@ -158,9 +158,9 @@ void parse_token(const string inputString, vector<string> &tokens, string &error
                 tokens.push_back(token);
                 token = "";
             }
-            token += "\"";
+            token += c;
             i++;
-            while( (!((inputString[i] == '\"') && (slashCount == 0))) && (i < inputString.length()))
+            while( (!(((inputString[i] == '\"') || (inputString[i] == '\'')) && (slashCount == 0))) && (i < inputString.length()))
             {
                 if(inputString[i] == '\\')
                 {
@@ -174,10 +174,10 @@ void parse_token(const string inputString, vector<string> &tokens, string &error
                 token += inputString[i];
                 i++;
             }
-            if(inputString[i] == '\"')
+            if((inputString[i] == '\"') || (inputString[i] == '\''))
             {
                 quotes++;
-                token += "\"";
+                token += inputString[i];
             }
             //tokens.push_back(token);
             //token = "";

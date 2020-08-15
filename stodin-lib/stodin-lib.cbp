@@ -51,6 +51,7 @@
 		<Unit filename="__stodin_safe.h" />
 		<Unit filename="__stodin_string.cpp" />
 		<Unit filename="__stodin_string.h" />
+		<Unit filename="__stodin_types.h" />
 		<Unit filename="_stodin_lib_exstr.cpp" />
 		<Unit filename="_stodin_lib_exstr.h" />
 		<Unit filename="_stodin_lib_fileinfo.cpp" />

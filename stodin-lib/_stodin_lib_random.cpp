@@ -4,7 +4,7 @@
 
 namespace _stodin_lib_random
 {
-    static bool randNotInitialized = true;
+    static __stodin_bool randNotInitialized = true;
     void randint(int64_t & res, int64_t startPos, int64_t endPos)
     {
         if(randNotInitialized)

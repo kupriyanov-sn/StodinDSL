@@ -19,7 +19,7 @@ namespace _stodin_lib_math
         res = ::fabs(x - y);
     }
 
-    void float_compare(bool & res, double x, double y, double percent)
+    void float_compare(__stodin_bool & res, double x, double y, double percent)
     {
         double epsilon = std::numeric_limits<double>::epsilon();
         if((y > epsilon) || (y < -epsilon))

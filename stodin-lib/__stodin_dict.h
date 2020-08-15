@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <algorithm>
 #include <iterator>
+#include "__stodin_types.h"
 #include "__stodin_string.h"
 
 using namespace std;
@@ -29,6 +30,17 @@ class __stodin_dict
         }
 
         TValue& at(const TKey idx)
+        {
+            return _dict.at(idx);
+        }
+
+        TValue at(const char * idx) const
+        {
+            __stodin_string sidx = idx;
+            return _dict.at(sidx);
+        }
+
+        TValue at(const TKey idx) const
         {
             return _dict.at(idx);
         }
@@ -61,7 +73,7 @@ class __stodin_dict
             sz = dict._dict.size();
         }
 
-        friend void find(__stodin_dict<TKey, TValue>& dict, pair<TKey, TValue> & keyValue, bool & exist, const TKey & key)
+        friend void find(__stodin_dict<TKey, TValue>& dict, pair<TKey, TValue> & keyValue, __stodin_bool & exist, const TKey & key)
         {
             pair<TKey, TValue> res = dict._dict.found(key);
             exist = (res != dict._dict.end());
@@ -69,7 +81,7 @@ class __stodin_dict
                 keyValue = res;
         }
 
-        friend void has_key(__stodin_dict<TKey, TValue>& dict, bool & exist, const TKey & key)
+        friend void has_key(__stodin_dict<TKey, TValue>& dict, __stodin_bool & exist, const TKey & key)
         {
             exist = (dict._dict.found(key) != dict._dict.end());
         }

@@ -366,16 +366,19 @@
 	"__stodin_string.h"
 	"__stodin_array.h"
 
-1591181774 c:\stodin\stodin-lib\__stodin_string.h
+1597473876 c:\stodin\stodin-lib\__stodin_string.h
 	<string>
 	<iostream>
 	<functional>
+	"__stodin_types.h"
 
-1590482540 c:\stodin\stodin-lib\__stodin_array.h
+1595686918 c:\stodin\stodin-lib\__stodin_array.h
 	<vector>
 	<cstdint>
 	<algorithm>
 	<iterator>
+	<stdexcept>
+	"__stodin_types.h"
 
 1590408278 source:c:\stodin\stodin-lib\__stodin_file.cpp
 	<cstring>
@@ -387,27 +390,29 @@
 	<cstdint>
 	"__stodin_string.h"
 
-1592824046 source:c:\stodin\stodin-lib\__stodin_io.cpp
+1597096454 source:c:\stodin\stodin-lib\__stodin_io.cpp
 	"__stodin_io.h"
 	<windows.h>
 
-1591522764 c:\stodin\stodin-lib\__stodin_io.h
+1597096745 c:\stodin\stodin-lib\__stodin_io.h
 	<cstdint>
 	<stdexcept>
 	<iostream>
 	<limits>
+	"__stodin_types.h"
 	"__stodin_string.h"
 
 1590998418 source:c:\stodin\stodin-lib\__stodin_safe.cpp
 	"__stodin_safe.h"
 
-1592850620 c:\stodin\stodin-lib\__stodin_safe.h
+1593937862 c:\stodin\stodin-lib\__stodin_safe.h
 	<iostream>
 	<exception>
 	<limits>
 	<cmath>
+	"__stodin_types.h"
 
-1592124416 source:c:\stodin\stodin-lib\__stodin_string.cpp
+1593937760 source:c:\stodin\stodin-lib\__stodin_string.cpp
 	<limits>
 	<cstdlib>
 	<cctype>
@@ -421,7 +426,7 @@
 	"__stodin_string.h"
 	"__stodin_array.h"
 
-1592142274 source:c:\stodin\stodin-lib\_stodin_lib_fileinfo.cpp
+1593937760 source:c:\stodin\stodin-lib\_stodin_lib_fileinfo.cpp
 	<string>
 	<sstream>
 	<iostream>
@@ -434,18 +439,20 @@
 	<windows.h>
 	"_stodin_lib_fileinfo.h"
 
-1592142274 c:\stodin\stodin-lib\_stodin_lib_fileinfo.h
+1593937862 c:\stodin\stodin-lib\_stodin_lib_fileinfo.h
+	"__stodin_types.h"
 	"__stodin_string.h"
 	"__stodin_array.h"
 
-1589889076 source:c:\stodin\stodin-lib\_stodin_lib_math.cpp
+1593937760 source:c:\stodin\stodin-lib\_stodin_lib_math.cpp
 	"_stodin_lib_math.h"
 	<cmath>
 	<limits>
 
-1589888292 c:\stodin\stodin-lib\_stodin_lib_math.h
+1593937862 c:\stodin\stodin-lib\_stodin_lib_math.h
+	"__stodin_types.h"
 
-1589005950 source:c:\stodin\stodin-lib\_stodin_lib_random.cpp
+1593937760 source:c:\stodin\stodin-lib\_stodin_lib_random.cpp
 	"_stodin_lib_random.h"
 	<cstdlib>
 	<ctime>
@@ -461,4 +468,28 @@
 
 1589006118 c:\stodin\stodin-lib\_stodin_lib_time.h
 	<cstdint>
+
+1593937760 c:\stodin\stodin-lib\__stodin_types.h
+	<cstdint>
+
+1597095796 source:c:\stodin\stodin-lib\main.cpp
+	<iostream>
+	<exception>
+	<cwchar>
+	<windows.h>
+	"__stodin_string.h"
+	"__stodin_array.h"
+	"__stodin_dict.h"
+	"__stodin_io.h"
+	"_stodin_lib_math.h"
+	"__stodin_common.h"
+	"__stodin_safe.h"
+
+1595686918 c:\stodin\stodin-lib\__stodin_dict.h
+	<map>
+	<cstdint>
+	<algorithm>
+	<iterator>
+	"__stodin_types.h"
+	"__stodin_string.h"
 

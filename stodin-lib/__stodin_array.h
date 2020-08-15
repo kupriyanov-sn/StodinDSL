@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <algorithm>
 #include <iterator>
+#include <stdexcept>      // std::out_of_range
+#include "__stodin_types.h"
 
 using namespace std;
 
@@ -22,6 +24,14 @@ class __stodin_array
         }
 
         T& at(int64_t idx)
+        {
+            if(idx > -1)
+                return _array.at(static_cast<size_t>(idx));
+            else
+                return _array.at(static_cast<size_t>(_array.size() + idx));
+        }
+
+        T at(int64_t idx) const
         {
             if(idx > -1)
                 return _array.at(static_cast<size_t>(idx));
@@ -54,6 +64,26 @@ class __stodin_array
         friend void resize(__stodin_array<T>& arr, int64_t sz)
         {
             arr._array.resize(sz);
+        }
+
+        friend void resize(__stodin_array<T>& arr, int64_t sz, const T value)
+        {
+            size_t prev_sz = arr._array.size();
+            arr._array.resize(sz);
+            if(sz > static_cast<int64_t>(prev_sz))
+                fill(arr._array.begin() + prev_sz, arr._array.end(), value);
+        }
+
+        friend void fill(__stodin_array<T>& arr, const T value)
+        {
+            fill(arr._array.begin(), arr._array.end(), value);
+        }
+
+        friend void fill(__stodin_array<T>& arr, const int64_t begin, const int64_t end, const T value)
+        {
+            if((begin < 0) || (end < 1) || (begin >= end) || (end > static_cast<int64_t>(arr._array.size())))
+                throw std::out_of_range("Array index out of bounds!");
+            fill(arr._array.begin() + begin, arr._array.begin() + end, value);
         }
 
         friend void copy_elem(T &elem, const __stodin_array<T>& arr, int64_t idx)

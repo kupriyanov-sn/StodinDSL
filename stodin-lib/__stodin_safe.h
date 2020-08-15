@@ -5,6 +5,7 @@
 #include<exception>
 #include <limits>
 #include <cmath>
+#include "__stodin_types.h"
 
 using namespace std;
 //https://wiki.sei.cmu.edu/confluence/display/c/INT32-C.+Ensure+that+operations+on+signed+integers+do+not+result+in+overflow

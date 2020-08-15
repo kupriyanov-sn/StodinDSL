@@ -1,0 +1,257 @@
+import random
+import ^ hero
+import ^ action
+
+typedef ^hero:Hero Hero
+typedef ^hero:HeroType HeroType
+
+const DIVIDING_LINE @string "===========================\n"
+
+def print_actions
+    cref hero:Hero
+    @print* DIVIDING_LINE "Choose action:\n"
+    *counter @int 1
+    for *action in hero.actions
+        *hai @int action$int
+        @print* counter ". " ^hero:HERO_ACTION_STRING|hai "\n"
+        counter + 1
+    
+def get_actions_number
+    mref number:int
+    cref hero:Hero good:bool
+    *sz @int @size hero.actions
+    if sz 1
+        number = 0
+        return
+    if good
+        @print_actions hero
+        number @scan 
+        number - 1
+        if >= number sz
+            number = -1
+        if < number 0
+            number = -1
+    else
+        number @random:randint 1 sz - 1
+    
+
+def clean_zero_health_heroes
+    mref heroes:array|Hero
+    *sz @int @size heroes - 1
+    for *i @int in sz;-1;-1
+        if <= heroes|i|.health 0
+            heroes @erase i
+
+def fight
+    mref ourHeroes:array|Hero enemyHeroes:array|Hero
+    cref selfIdx:int good:bool
+    *nameIdx @int ourHeroes|selfIdx|.type$int
+    *heroName @string HERO_TYPE_STRING|nameIdx
+    if ourHeroes|selfIdx|.type HeroType^Troll
+        ourHeroes|selfIdx|.health + 5
+    if ourHeroes|selfIdx|.type HeroType^Ghost
+        ourHeroes|selfIdx|.health + 3
+    if > ourHeroes|selfIdx|.health ourHeroes|selfIdx|.maxHealth
+        ourHeroes|selfIdx|.health = ourHeroes|selfIdx|.maxHealth
+    if ourHeroes|selfIdx|.stunned
+        ourHeroes|selfIdx|.stunned = false
+        @print* heroName " regains consciousness. Press Enter."
+        @wait_enter
+        return    
+    *actionNumber @int -1
+    actionNumber @get_actions_number ourHeroes|selfIdx good
+    if actionNumber -1
+        @print* "No such an action. " heroName " gets penalty.\n"
+        ourHeroes|selfIdx|.health - PENALTY
+    else
+        *action @^hero:HeroAction ourHeroes|selfIdx|.actions|actionNumber
+        if action ^hero:HeroAction^Attack
+            ourHeroes enemyHeroes @^action:attack selfIdx good
+        elif action ^hero:HeroAction^Stun
+            ourHeroes enemyHeroes @^action:stun selfIdx good
+        elif action ^hero:HeroAction^Heal
+            ourHeroes @^action:heel selfIdx good
+        elif action ^hero:HeroAction^MassHeal
+            ourHeroes @^action:heel_all selfIdx
+        elif action ^hero:HeroAction^Inspire
+            ourHeroes @^action:inspires_all selfIdx                
+        elif action ^hero:HeroAction^MassAttack
+            enemyHeroes @^action:attack_all_by ourHeroes|selfIdx
+        elif action ^hero:HeroAction^Ressurect
+            ourHeroes @^action:ressurect selfIdx
+        if != action HeroAction^Inspire
+            ourHeroes|selfIdx|.inspired = false
+    ourHeroes @clean_zero_health_heroes
+    enemyHeroes @clean_zero_health_heroes
+    if good false
+        @print "Press Enter."
+        @wait_enter
+        
+    
+def print_all_heroes
+    cref goodHeroes:array|Hero badHeroes:array|Hero
+    *idx @int 0
+    *gsz @int @size goodHeroes - 1
+    @print* "\n" DIVIDING_LINE
+    for *i @int in gsz;-1;-1
+        idx = i + 1
+        @^hero:print_hero goodHeroes|i idx
+    @print "\nvs\n\n"
+    idx = 1
+    for *h in badHeroes
+        @^hero:print_hero h idx
+        idx + 1
+    @print DIVIDING_LINE
+
+def check_battle
+    mref res:bool
+    cref goodHeroes:array|Hero badHeroes:array|Hero
+    res = true
+    *sum @int 0
+    for *h in goodHeroes
+        sum + h.health
+    if sum 0
+        res = false
+    sum = 0
+    for *h in badHeroes
+        sum + h.health
+    if sum 0
+        res = false
+
+def make_bad_team
+    mref badHeroes:array|Hero
+    cref turn:int
+    if turn 0
+        badHeroes|* @^hero:make_goblin
+        badHeroes|* @^hero:make_goblin
+        badHeroes|* @^hero:make_troll
+        badHeroes|* @^hero:make_witch
+    elif turn 1
+        badHeroes|* @^hero:make_zombie
+        badHeroes|* @^hero:make_ghost
+        badHeroes|* @^hero:make_ghost
+        badHeroes|* @^hero:make_lich
+    elif turn 2
+        badHeroes|* @^hero:make_goblin
+        badHeroes|* @^hero:make_goblin
+        badHeroes|* @^hero:make_goblin
+        badHeroes|* @^hero:make_hydra
+    elif turn 3
+        badHeroes|* @^hero:make_lich
+        badHeroes|* @^hero:make_zombie
+        badHeroes|* @^hero:make_zombie
+        badHeroes|* @^hero:make_zombie
+    elif turn 4
+        badHeroes|* @^hero:make_troll
+        badHeroes|* @^hero:make_goblin
+        badHeroes|* @^hero:make_witch
+        badHeroes|* @^hero:make_hydra
+    elif turn 5
+        badHeroes|* @^hero:make_troll
+        badHeroes|* @^hero:make_witch
+        badHeroes|* @^hero:make_witch
+        badHeroes|* @^hero:make_witch
+    elif turn 6
+        badHeroes|* @^hero:make_zombie
+        badHeroes|* @^hero:make_lich
+        badHeroes|* @^hero:make_vampire
+        badHeroes|* @^hero:make_vampire
+    
+    
+def do_match
+    mref goodHeroes:array|Hero
+    cref turn:int stunningFlag:bool
+    *badHeroes @array|Hero @make_bad_team turn
+    if stunningFlag
+        for *i @int in 0;2;1
+            badHeroes|i|.stunned = true
+    *goodPointer @int 0
+    *badPointer @int 0
+    @print_all_heroes goodHeroes badHeroes
+    *good @bool true
+    for *b @bool in b @check_battle goodHeroes badHeroes
+        if good
+            *gsz @int @size goodHeroes
+            if < goodPointer gsz
+                @print ">> "
+                *idx @int goodPointer + 1
+                @print_hero goodHeroes|goodPointer idx
+                goodHeroes badHeroes @fight goodPointer good
+                @print_all_heroes goodHeroes badHeroes
+            goodPointer + 1
+        else
+            *bsz @int @size badHeroes
+            if < badPointer bsz
+                badHeroes goodHeroes @fight badPointer good
+                @print_all_heroes goodHeroes badHeroes
+            badPointer + 1
+        good = !good
+        *gsz @int @size goodHeroes
+        *bsz @int @size badHeroes
+        if > goodPointer gsz
+            if > badPointer bsz
+                badPointer = 0
+                goodPointer = 0
+        if > badPointer bsz
+            if > goodPointer gsz
+                badPointer = 0
+                goodPointer = 0
+        if bsz 1
+            if > gsz 2
+                @print "The enemy is forced to retreat. \n\n"
+                break
+
+def choose_prize
+    mref number:int
+    @print "Choose your prize:\n\n"
+    @print "1. A heeling spell (health +10 for all).\n"
+    @print "2. An inspiring prayer (inspire all).\n"
+    @print "3. A stunning roar (stun two nearest enemies).\n"
+    number @scan - 1
+    if > number 2
+        number = -1
+
+def use_prize
+    mref goodHeroes:array|Hero stunningFlag:bool
+    cref prizeNumber:int
+    stunningFlag = false
+    if prizeNumber 0
+        for *hero in goodHeroes
+            hero.health + 10
+    elif prizeNumber 1
+        for *hero in goodHeroes
+            hero.inspired = true  
+    elif prizeNumber 2
+        stunningFlag = true
+    
+const MATCHES_AMOUNT @int 7
+const HEROES_AMOUNT @int 4
+
+def main
+    *goodHeroes @array|Hero 
+    goodHeroes|* @^hero:make_guard
+    goodHeroes|* @^hero:make_knight
+    goodHeroes|* @^hero:make_mage
+    goodHeroes|* @^hero:make_nun
+    *stunningFlag @bool false
+    for *i @int in 0;MATCHES_AMOUNT;1
+        goodHeroes @do_match i stunningFlag
+        *sz @int @size goodHeroes
+        if sz 0
+            @print "You lose the game. Game over. Press Enter."
+            @wait_enter
+            return
+        elif < sz HEROES_AMOUNT
+            for *i @int in sz;HEROES_AMOUNT;1
+                goodHeroes|* @^hero:make_ghost
+        *n @int MATCHES_AMOUNT - i 1
+        if n
+            @print* "You win the battle. " n " battles left.\n\n"
+            *prizeNumber @int @choose_prize
+            goodHeroes stunningFlag @use_prize prizeNumber
+            @print* "Prepare to the next battle. Press Enter."
+            @wait_enter
+    @print "You win the game!!! Congratulations!!!\nPress Enter."
+    @wait_enter
+                
+    

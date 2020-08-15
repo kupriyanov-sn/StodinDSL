@@ -3,7 +3,7 @@ SHELL = cmd.exe
 CC="C:\Program Files\CodeBlocks\MinGW\bin\g++.exe"
 CFLAGS= -std=c++14 -Wall -fexceptions -std=c++14  -c 
 LIBS=
-LFLAGS= -static-libstdc++ -static-libgcc -static -s -static-libstdc++ -static-libgcc -static
+LFLAGS= -static-libstdc++ -static-libgcc -static -s
 SRC=..\compile
 OBJECTS=auxiliary.o parser_check.o parser_expr.o parser_stmt.o\
 lexer.o parser.o parser_error.o parser_ops.o main.o

@@ -88,68 +88,68 @@ __stodin_string& __stodin_string::operator+=(char ch)
 
 /// compare operator ==
 
-bool operator== (const __stodin_string& lhs, const __stodin_string& rhs) noexcept
+__stodin_bool operator== (const __stodin_string& lhs, const __stodin_string& rhs) noexcept
 {
     return lhs._str == rhs._str;
 }
 
-bool operator== (const __stodin_string& lhs, const string& rhs) noexcept
+__stodin_bool operator== (const __stodin_string& lhs, const string& rhs) noexcept
 {
     return lhs._str == rhs;
 }
 
-bool operator== (const string& lhs, const __stodin_string& rhs) noexcept
+__stodin_bool operator== (const string& lhs, const __stodin_string& rhs) noexcept
 {
     return lhs == rhs._str;
 }
 
-bool operator== (const char*   lhs, const __stodin_string& rhs)
+__stodin_bool operator== (const char*   lhs, const __stodin_string& rhs)
 {
     return rhs._str == lhs;
 }
 
-bool operator== (const __stodin_string& lhs, const char*   rhs)
+__stodin_bool operator== (const __stodin_string& lhs, const char*   rhs)
 {
     return lhs._str == rhs;
 }
 
-bool operator== (char lhs, const __stodin_string& rhs)
+__stodin_bool operator== (char lhs, const __stodin_string& rhs)
 {
     return (rhs._str.size() == 1) && (rhs._str[0] == lhs);
 }
 
-bool operator== (const __stodin_string& lhs, char rhs)
+__stodin_bool operator== (const __stodin_string& lhs, char rhs)
 {
     return (lhs._str.size() == 1) && (lhs._str[0] == rhs);
 }
 
 /// compare operator !=
 
-bool operator!= (const __stodin_string& lhs, const __stodin_string& rhs) noexcept
+__stodin_bool operator!= (const __stodin_string& lhs, const __stodin_string& rhs) noexcept
 {
     return !(lhs == rhs);
 }
-bool operator!= (const __stodin_string& lhs, const string& rhs) noexcept
+__stodin_bool operator!= (const __stodin_string& lhs, const string& rhs) noexcept
 {
     return !(lhs == rhs);
 }
-bool operator!= (const string& lhs, const __stodin_string& rhs) noexcept
+__stodin_bool operator!= (const string& lhs, const __stodin_string& rhs) noexcept
 {
     return !(lhs == rhs);
 }
-bool operator!= (const char*   lhs, const __stodin_string& rhs)
+__stodin_bool operator!= (const char*   lhs, const __stodin_string& rhs)
 {
     return !(lhs == rhs);
 }
-bool operator!= (const __stodin_string& lhs, const char*   rhs)
+__stodin_bool operator!= (const __stodin_string& lhs, const char*   rhs)
 {
     return !(lhs == rhs);
 }
-bool operator!= (char lhs, const __stodin_string& rhs)
+__stodin_bool operator!= (char lhs, const __stodin_string& rhs)
 {
     return !(lhs == rhs);
 }
-bool operator!= (const __stodin_string& lhs, char rhs)
+__stodin_bool operator!= (const __stodin_string& lhs, char rhs)
 {
     return !(lhs == rhs);
 }
@@ -178,7 +178,7 @@ void getline ( __stodin_string& str)
     getline(cin, str._str);
 }
 
-void getline (__stodin_string& str, char delim, bool flag)
+void getline (__stodin_string& str, char delim, __stodin_bool flag)
 {
     getline(cin, str._str, delim);
     if(!cin)
@@ -189,7 +189,7 @@ void getline (__stodin_string& str, char delim, bool flag)
     }
 }
 
-void getline (__stodin_string& str, bool flag)
+void getline (__stodin_string& str, __stodin_bool flag)
 {
     getline(cin, str._str);
     if(!cin)
@@ -207,7 +207,7 @@ void size(int64_t & sz, const __stodin_string & str)
     sz = str._str.size();
 }
 
-void empty(bool &res, const __stodin_string& str) noexcept
+void empty(__stodin_bool &res, const __stodin_string& str) noexcept
 {
     res = str._str.empty();
 }
@@ -479,133 +479,133 @@ __stodin_string::~__stodin_string()
 
 // string is something
 
-void isalnum(bool & res, const __stodin_string str)
+void isalnum(__stodin_bool & res, const __stodin_string str)
 {
     res = !(str._str.empty());
     for(auto & ch: str._str)
     {
-        bool b = false;
+        __stodin_bool b = false;
         isalnum(b, ch);
         res = res && b;
         if(!res) break;
     }
 }
-void isalpha(bool & res, const __stodin_string str)
+void isalpha(__stodin_bool & res, const __stodin_string str)
 {
     res = !(str._str.empty());
     for(auto & ch: str._str)
     {
-        bool b = false;
+        __stodin_bool b = false;
         isalpha(b, ch);
         res = res && b;
         if(!res) break;
     }
 }
-void isblank(bool & res, const __stodin_string str)
+void isblank(__stodin_bool & res, const __stodin_string str)
 {
     res = !(str._str.empty());
     for(auto & ch: str._str)
     {
-        bool b = false;
+        __stodin_bool b = false;
         isblank(b, ch);
         res = res && b;
         if(!res) break;
     }
 }
-void iscntrl(bool & res, const __stodin_string str)
+void iscntrl(__stodin_bool & res, const __stodin_string str)
 {
     res = !(str._str.empty());
     for(auto & ch: str._str)
     {
-        bool b = false;
+        __stodin_bool b = false;
         iscntrl(b, ch);
         res = res && b;
         if(!res) break;
     }
 }
-void isdigit(bool & res, const __stodin_string str)
+void isdigit(__stodin_bool & res, const __stodin_string str)
 {
     res = !(str._str.empty());
     for(auto & ch: str._str)
     {
-        bool b = false;
+        __stodin_bool b = false;
         isdigit(b, ch);
         res = res && b;
         if(!res) break;
     }
 }
-void isgraph(bool & res, const __stodin_string str)
+void isgraph(__stodin_bool & res, const __stodin_string str)
 {
     res = !(str._str.empty());
     for(auto & ch: str._str)
     {
-        bool b = false;
+        __stodin_bool b = false;
         isgraph(b, ch);
         res = res && b;
         if(!res) break;
     }
 }
-void islower(bool & res, const __stodin_string str)
+void islower(__stodin_bool & res, const __stodin_string str)
 {
     res = !(str._str.empty());
     for(auto & ch: str._str)
     {
-        bool b = false;
+        __stodin_bool b = false;
         islower(b, ch);
         res = res && b;
         if(!res) break;
     }
 }
-void isprint(bool & res, const __stodin_string str)
+void isprint(__stodin_bool & res, const __stodin_string str)
 {
     res = !(str._str.empty());
     for(auto & ch: str._str)
     {
-        bool b = false;
+        __stodin_bool b = false;
         isprint(b, ch);
         res = res && b;
         if(!res) break;
     }
 }
-void ispunct(bool & res, const __stodin_string str)
+void ispunct(__stodin_bool & res, const __stodin_string str)
 {
     res = !(str._str.empty());
     for(auto & ch: str._str)
     {
-        bool b = false;
+        __stodin_bool b = false;
         ispunct(b, ch);
         res = res && b;
         if(!res) break;
     }
 }
-void isspace(bool & res, const __stodin_string str)
+void isspace(__stodin_bool & res, const __stodin_string str)
 {
     res = !(str._str.empty());
     for(auto & ch: str._str)
     {
-        bool b = false;
+        __stodin_bool b = false;
         isspace(b, ch);
         res = res && b;
         if(!res) break;
     }
 }
-void isupper(bool & res, const __stodin_string str)
+void isupper(__stodin_bool & res, const __stodin_string str)
 {
     res = !(str._str.empty());
     for(auto & ch: str._str)
     {
-        bool b = false;
+        __stodin_bool b = false;
         isupper(b, ch);
         res = res && b;
         if(!res) break;
     }
 }
-void isxdigit(bool & res, const __stodin_string str)
+void isxdigit(__stodin_bool & res, const __stodin_string str)
 {
     res = !(str._str.empty());
     for(auto & ch: str._str)
     {
-        bool b = false;
+        __stodin_bool b = false;
         isxdigit(b, ch);
         res = res && b;
         if(!res) break;
@@ -622,53 +622,53 @@ void tolower(__stodin_string & str)
 }
 
 // ch is something
-void isalnum(bool & res, const char ch)
+void isalnum(__stodin_bool & res, const char ch)
 {
-    res = static_cast<bool>(isalnum(static_cast<int>(ch)));
+    res = static_cast<__stodin_bool>(isalnum(static_cast<int>(ch)));
 }
-void isalpha(bool & res, const char ch)
+void isalpha(__stodin_bool & res, const char ch)
 {
-    res = static_cast<bool>(isalpha(static_cast<int>(ch)));
+    res = static_cast<__stodin_bool>(isalpha(static_cast<int>(ch)));
 }
-void isblank(bool & res, const char ch)
+void isblank(__stodin_bool & res, const char ch)
 {
-    res = static_cast<bool>(isblank(static_cast<int>(ch)));
+    res = static_cast<__stodin_bool>(isblank(static_cast<int>(ch)));
 }
-void iscntrl(bool & res, const char ch)
+void iscntrl(__stodin_bool & res, const char ch)
 {
-    res = static_cast<bool>(iscntrl(static_cast<int>(ch)));
+    res = static_cast<__stodin_bool>(iscntrl(static_cast<int>(ch)));
 }
-void isdigit(bool & res, const char ch)
+void isdigit(__stodin_bool & res, const char ch)
 {
-    res = static_cast<bool>(isdigit(static_cast<int>(ch)));
+    res = static_cast<__stodin_bool>(isdigit(static_cast<int>(ch)));
 }
-void isgraph(bool & res, const char ch)
+void isgraph(__stodin_bool & res, const char ch)
 {
-    res = static_cast<bool>(isgraph(static_cast<int>(ch)));
+    res = static_cast<__stodin_bool>(isgraph(static_cast<int>(ch)));
 }
-void islower(bool & res, const char ch)
+void islower(__stodin_bool & res, const char ch)
 {
-    res = static_cast<bool>(islower(static_cast<int>(ch)));
+    res = static_cast<__stodin_bool>(islower(static_cast<int>(ch)));
 }
-void isprint(bool & res, const char ch)
+void isprint(__stodin_bool & res, const char ch)
 {
-    res = static_cast<bool>(isprint(static_cast<int>(ch))) || (ch > 127);
+    res = static_cast<__stodin_bool>(isprint(static_cast<int>(ch))) || (ch > 127);
 }
-void ispunct(bool & res, const char ch)
+void ispunct(__stodin_bool & res, const char ch)
 {
-    res = static_cast<bool>(ispunct(static_cast<int>(ch))) || (ch > 127);
+    res = static_cast<__stodin_bool>(ispunct(static_cast<int>(ch))) || (ch > 127);
 }
-void isspace(bool & res, const char ch)
+void isspace(__stodin_bool & res, const char ch)
 {
-    res = static_cast<bool>(isspace(static_cast<int>(ch)));
+    res = static_cast<__stodin_bool>(isspace(static_cast<int>(ch)));
 }
-void isupper(bool & res, const char ch)
+void isupper(__stodin_bool & res, const char ch)
 {
-    res = static_cast<bool>(isupper(static_cast<int>(ch)));
+    res = static_cast<__stodin_bool>(isupper(static_cast<int>(ch)));
 }
-void isxdigit(bool & res, const char ch)
+void isxdigit(__stodin_bool & res, const char ch)
 {
-    res = static_cast<bool>(isxdigit(static_cast<int>(ch)));
+    res = static_cast<__stodin_bool>(isxdigit(static_cast<int>(ch)));
 }
 
 void toupper(char & ch)

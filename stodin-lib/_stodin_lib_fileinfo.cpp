@@ -20,13 +20,13 @@
 
 namespace _stodin_lib_fileinfo
 {
-    void file_exists(bool & res, const char * name)
+    void file_exists(__stodin_bool & res, const char * name)
     {
         struct stat buffer;
         res = (stat(name, &buffer) == 0);
     }
 
-    void file_exists(bool & res, __stodin_string & name)
+    void file_exists(__stodin_bool & res, __stodin_string & name)
     {
         file_exists(res, name.get_string().c_str());
     }
@@ -98,7 +98,7 @@ namespace _stodin_lib_fileinfo
         join(dirName, s, fileName);
     }
 
-    static bool _compare_files(const std::string& file1, const std::string& file2)
+    static __stodin_bool _compare_files(const std::string& file1, const std::string& file2)
     { // https://stackoverflow.com/questions/6163611/compare-two-files
         std::ifstream f1(file1, ios::binary);
         std::ifstream f2(file2, ios::binary);
@@ -116,22 +116,22 @@ namespace _stodin_lib_fileinfo
                         std::istreambuf_iterator<char>(f2.rdbuf()));
     }
 
-    void compare_files(bool & res, const __stodin_string & file1, const __stodin_string & file2)
+    void compare_files(__stodin_bool & res, const __stodin_string & file1, const __stodin_string & file2)
     {
         res = _compare_files(file1.get_string(), file2.get_string());
     }
 
-    void compare_files(bool & res, const __stodin_string & file1, const char * file2)
+    void compare_files(__stodin_bool & res, const __stodin_string & file1, const char * file2)
     {
         res = _compare_files(file1.get_string(), string(file2));
     }
 
-    void compare_files(bool & res, const char * file1, const __stodin_string & file2)
+    void compare_files(__stodin_bool & res, const char * file1, const __stodin_string & file2)
     {
         res = _compare_files(string(file1), file2.get_string());
     }
 
-    void compare_files(bool & res, const char * file1, const char * file2)
+    void compare_files(__stodin_bool & res, const char * file1, const char * file2)
     {
         res = _compare_files(string(file1), string(file2));
     }

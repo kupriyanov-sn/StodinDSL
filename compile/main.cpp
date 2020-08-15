@@ -175,6 +175,7 @@ bool create_module(const string &name, const string & inPath, const string & out
 #define _STODIN_" + upHeader + "_INCLUDED\n\
 #include <cstdint>\n\
 #include <exception>\n\
+#include \"__stodin_types.h\"\n\
 #include \"__stodin_string.h\"\n\
 #include \"__stodin_array.h\"\n\
 #include \"__stodin_dict.h\"\n\
@@ -218,7 +219,7 @@ void create_makefile(const vector<string> &modules, const vector<string> &libObj
 CC=" + cfg.compiler + "\n\
 CFLAGS= -std=c++14 -Wall -fexceptions -std=c++14  -c \n\
 LIBS=\n\
-LFLAGS= -static-libstdc++ -static-libgcc -static -s -static-libstdc++ -static-libgcc -static\n";
+LFLAGS= -static-libstdc++ -static-libgcc -static -s\n";
     string s = "OBJECTS= ";
     if(modules.size())
     {
@@ -283,7 +284,8 @@ int main(int argc, char** argv)
         string outPath = join(inPath, "stodin-out");
         cpp11_create_folder(outPath);
 
-        vector<string> libFiles = { "__stodin_array.h", "__stodin_dict.h",
+        vector<string> libFiles = { "__stodin_types.h",
+                                    "__stodin_array.h", "__stodin_dict.h",
                                     "__stodin_string.h", "__stodin_string.cpp",
                                     "__stodin_io.h", "__stodin_io.cpp",
                                     "__stodin_file.h", "__stodin_file.cpp",

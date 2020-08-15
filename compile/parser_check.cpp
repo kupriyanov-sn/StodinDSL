@@ -20,7 +20,7 @@ map<string, string> types =
     {"u8", "uint8_t"}, {"i8", "int8_t"}, {"u16", "uint16_t"}, {"i16", "int16_t"},
     {"u32", "uint32_t"}, {"i32", "int32_t"},
     {"double", "double"}, {"float", "float"}, {"ldouble", "long double"},
-    {"string", "__stodin_string"}, {"bool", "bool"}, {"array", "__stodin_array"}, {"dict", "__stodin_dict"},
+    {"string", "__stodin_string"}, {"bool", "__stodin_bool"}, {"array", "__stodin_array"}, {"dict", "__stodin_dict"},
     {"file", "__stodin_file"}
 };
 
@@ -42,6 +42,11 @@ string check_enum(string res)
 
 string check_aggregate(const string op, const bool creating)
 {
+    if(op == "true")
+        return "1";
+    if(op == "false")
+        return "0";
+
     string res = "";
     string newType = "";
     string errStr = "";
@@ -75,6 +80,11 @@ string check_aggregate(const string op, const bool creating)
                         }
                         else
                             res += ".at(" + check_module(index) + ")";
+                    }
+                    else if(subtokens[i + 1][0] == '.')
+                    {
+                        string field = subtokens[i + 1].substr(1);
+                        res += "." + check_module(field);
                     }
                     else
                     {

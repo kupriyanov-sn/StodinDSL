@@ -1,0 +1,151 @@
+import random
+import ^ hero
+
+typedef ^hero:Hero Hero
+typedef ^hero:HeroType HeroType
+
+const PENALTY @int 5
+
+def get_hero_name
+    mref name:string
+    cref hero:Hero
+    *nameIdx @int hero.type$int
+    name = ^hero:HERO_TYPE_STRING|nameIdx
+
+def get_target_index
+    mref index:int
+    cref heroes:array|Hero good:bool
+    if good
+        @print "Select hero index: "
+        index @scan
+        index - 1
+    else
+        *lastHeroInx @int @size heroes - 1
+        index @random:randint 0 lastHeroInx
+        *heroName @string @get_hero_name heroes|index
+        @print* "Selected hero: " heroName ". "
+
+def _destroy_by
+    mref enemyHero:Hero 
+    cref hero:Hero
+    *negDefence @int 100 - enemyHero.defence
+    *r1 @int @random:randint hero.minStrength hero.maxStrength 
+    if hero.inspired
+        r1 = hero.maxStrength
+    r1 * negDefence / 100
+    enemyHero.health - r1
+
+def attack
+    mref ourHeroes:array|Hero enemyHeroes:array|Hero
+    cref selfIdx:int good:bool
+    *heroName @string @get_hero_name ourHeroes|selfIdx
+    *ourSz @int @size ourHeroes
+    *enemySz @int @size enemyHeroes
+    @print* heroName " attacks.\n"
+    *targetIdx @int @get_target_index enemyHeroes good
+    if < targetIdx 0
+        targetIdx = enemySz + 1
+    if < targetIdx enemySz
+        enemyHeroes|targetIdx @_destroy_by ourHeroes|selfIdx 
+        if ourHeroes|selfIdx|.type HeroType^Vampire
+            ourHeroes|selfIdx|.health + 8
+            if > ourHeroes|selfIdx|.health ourHeroes|selfIdx|.maxHealth
+                ourHeroes|selfIdx|.health = ourHeroes|selfIdx|.maxHealth
+    else
+        @print* "No hero in selected position. " heroName " gets penalty.\n"
+        ourHeroes|selfIdx|.health - PENALTY                
+
+def stun
+    mref ourHeroes:array|Hero enemyHeroes:array|Hero
+    cref selfIdx:int good:bool
+    *heroName @string @get_hero_name ourHeroes|selfIdx
+    *enemySz @int @size enemyHeroes
+    @print* heroName " stuns.\n"
+    *targetIdx @int @get_target_index enemyHeroes good
+    if < targetIdx 0
+        targetIdx = enemySz + 1
+    if < targetIdx enemySz
+        enemyHeroes|targetIdx|.health - ourHeroes|selfIdx|.minStrength
+        *stunChance @int @random:randint 0 100
+        if ourHeroes|selfIdx|.inspired
+            enemyHeroes|targetIdx|.health - 1
+            stunChance + 10
+        if > stunChance enemyHeroes|targetIdx|.defence
+            enemyHeroes|targetIdx|.stunned = true
+        else
+            *adversaryName @string @get_hero_name enemyHeroes|targetIdx
+            @print* adversaryName " dodges a blow.\n"
+    else
+        @print* "No hero in selected position. " heroName " gets penalty.\n"
+        ourHeroes|selfIdx|.health - PENALTY                
+
+
+def heel
+    mref ourHeroes:array|Hero
+    cref selfIdx:int good:bool
+    *heroName @string @get_hero_name ourHeroes|selfIdx
+    *ourSz @int @size ourHeroes
+    @print* heroName " heels.\n"
+    *targetIdx @int @get_target_index ourHeroes good
+    if < targetIdx 0
+        targetIdx = ourSz + 1
+    if < targetIdx ourSz
+        *r1 @int @random:randint 3 10
+        if ourHeroes|selfIdx|.inspired
+            r1 + 5
+        ourHeroes|targetIdx|.health + r1
+        if > ourHeroes|targetIdx|.health ourHeroes|targetIdx|.maxHealth
+            ourHeroes|targetIdx|.health = ourHeroes|targetIdx|.maxHealth                
+    else
+        @print* "No hero in selected position. " heroName " gets penalty.\n"
+        ourHeroes|selfIdx|.health - PENALTY                
+
+def heel_all
+    mref ourHeroes:array|Hero
+    cref selfIdx:int
+    *heroName @string @get_hero_name ourHeroes|selfIdx
+    @print* heroName " heels all.\n"
+    for *hero in ourHeroes
+        *r1 @int @random:randint 2 4
+        if ourHeroes|selfIdx|.inspired
+            r1 + 1
+        hero.health + r1
+        if > hero.health hero.maxHealth
+            hero.health = hero.maxHealth
+
+def inspires_all
+    mref ourHeroes:array|Hero
+    cref selfIdx:int
+    *heroName @string @get_hero_name ourHeroes|selfIdx
+    @print* heroName " inspires all.\n"
+    for *hero in ourHeroes
+        hero.inspired = true                
+
+
+def attack_all_by
+    mref enemyHeroes:array|Hero
+    cref ourHero:Hero
+    *heroName @string @get_hero_name ourHero
+    @print* heroName " attack all.\n"
+    for *hero in enemyHeroes
+        *r1 @int @random:randint 3 ourHero.minStrength
+        if ourHero.inspired
+            r1 + 1
+        hero.health - r1
+
+def ressurect
+    mref ourHeroes:array|Hero
+    cref selfIdx:int
+    *heroName @string @get_hero_name ourHeroes|selfIdx
+    *ourSz @int @size ourHeroes
+    if < ourSz 4
+        @print* heroName " ressurects a zombie.\n"
+        ourHeroes|* @^hero:make_zombie
+    else
+        for *hero in ourHeroes
+            if < hero.health hero.maxHealth
+                hero.health = hero.maxHealth
+                *anotherNameIdx @int hero.type$int
+                *anotherHeroName @string HERO_TYPE_STRING|anotherNameIdx
+                @print* heroName " restore " anotherHeroName ".\n"
+                break

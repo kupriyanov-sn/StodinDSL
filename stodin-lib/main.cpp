@@ -19,5 +19,27 @@ int main(int argc, char** argv)
     __stodin_string s = "Привет\n";
     print("Привет\n");
     print(s);
+    print("Press Enter");
+    wait_enter();
+    print("You'd pressed Enter\n");
+    print("Press Enter\n");
+    wait_enter();
+    print("You'd pressed Enter\n");
+    getch(s);
+    print(s);print("\n");
+    print("Press Enter\n");
+    wait_enter();
+    print("You'd pressed Enter\n");
+    scan(s);
+    print(s);print("\n");
+    print("Press Enter\n");
+    wait_enter();
+    print("You'd pressed Enter\n");
+    getline(s);
+    print(s);print("\n");
+    print("Press Enter\n");
+    wait_enter();
+    print("You'd pressed Enter\n");
+
     return 0;
 }

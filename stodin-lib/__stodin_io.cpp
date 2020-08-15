@@ -26,7 +26,7 @@ std::wstring utf8_decode(const std::string &str, unsigned int codepage)
     return wstrTo;
 }
 
-static bool _is_not_ascii(string & src)
+static __stodin_bool _is_not_ascii(string & src)
 {
     for(auto ch : src)
     {
@@ -36,7 +36,7 @@ static bool _is_not_ascii(string & src)
     return false;
 }
 
-static bool _is_not_ascii(const char * src)
+static __stodin_bool _is_not_ascii(const char * src)
 {
     const char * p = src;
     while(p++)
@@ -108,10 +108,11 @@ void scan(__stodin_string & value)
         else
 #endif // _WIN32
             value = s;
+        cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
 }
 
-void scan(bool & flag, __stodin_string & value)
+void scan(__stodin_bool & flag, __stodin_string & value)
 {
     string s = "";
     if(!(cin >> s))
@@ -129,6 +130,7 @@ void scan(bool & flag, __stodin_string & value)
         else
 #endif // _WIN32
             value = s;
+        cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
 }
 
@@ -139,11 +141,13 @@ void getch(__stodin_string & value)
     char ch = '\n';
     cin.get(ch);
     value = __stodin_string(ch);
+    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
-void getch()
+void wait_enter()
 {
-    char ch = '\n';
-    cin.ignore (std::numeric_limits<std::streamsize>::max(), '\n');
-    cin.get(ch);
+    char ch = 0;
+    while(ch != '\n')
+        cin.get(ch);
 }
+
