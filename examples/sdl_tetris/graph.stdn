@@ -1,0 +1,105 @@
+import sdl
+import ^ shapes
+
+const SCREEN_WIDTH @int 340
+const SCREEN_HEIGHT @int 440
+
+struct Graph
+    *renderer @Renderer 0
+    *window @Window 0
+
+def init
+    mref graph:Graph
+    @sdl:init SDL_INIT_VIDEO
+    @sdl:set_hint SDL_HINT_RENDER_SCALE_QUALITY "1"
+    graph.window @sdl:create_window "Tetris" SDL_WINDOWPOS_UNDEFINED SDL_WINDOWPOS_UNDEFINED SCREEN_WIDTH SCREEN_HEIGHT SDL_WINDOW_SHOWN
+    graph.renderer graph.window @sdl:create_renderer -1 SDL_RENDERER_ACCELERATED
+    graph.renderer @sdl:set_render_draw_color 0xFF 0xFF 0xFF 0xFF
+    
+def close
+    mref graph:Graph
+    graph.renderer @sdl:destroy_renderer
+    graph.window @sdl:destroy_window
+    @sdl:quit
+
+def clear_background
+    mref graph:Graph
+    graph.renderer @sdl:set_render_draw_color 0x0F 0x0F 0x0F 0xFF
+    graph.renderer @sdl:render_clear
+
+def repaint
+    mref graph:Graph
+    graph.renderer @sdl:render_present
+
+def draw_frame
+    mref graph:Graph
+    # render outlined rect
+    *x @i32 20
+    *y @i32 20
+    *w @i32 20 * 10
+    *h @i32 20 * 20
+    *outlinedRect @SDL_Rect x y w h
+    graph.renderer @sdl:set_render_draw_color 0x00 0xDD 0xCC 0xFF
+    graph.renderer @sdl:render_draw_rect outlinedRect
+
+def draw_score_frame
+    mref graph:Graph
+    # render outlined rect
+    *x @i32 20 * 14
+    *y @i32 20
+    *w @i32 20
+    *h @i32 20 * 20
+    *outlinedRect @SDL_Rect x y w h
+    graph.renderer @sdl:set_render_draw_color 0x00 0xDD 0xCC 0xFF
+    graph.renderer @sdl:render_draw_rect outlinedRect
+    
+def _draw_square
+    mref graph:Graph
+    cref clr:SDL_Color x:i32 y:i32
+    # render filled rect
+    *w @i32 20
+    *h @i32 20
+    *fillRect @SDL_Rect x y w h
+    graph.renderer @sdl:set_render_draw_color clr.r clr.g clr.b clr.a
+    graph.renderer @sdl:render_fill_rect fillRect
+
+def draw_square
+    mref graph:Graph
+    cref color:u8 x:i32 y:i32
+    # render filled rect
+    *clr @SDL_Color 0xCC 0xCC 0xCC 0xFF
+    if color
+        clr = 0xAA 0xAA 0xAA 0xFF
+    graph @_draw_square clr x y
+
+def draw_shape
+    mref graph:Graph
+    cref shape:^shapes:Shape
+    for *cell in shape.cells
+        *x @i32 cell.x$i32 + shape.x$i32 * 20 + 20
+        *y @i32 cell.y$i32 + shape.y$i32 * 20 + 20
+        graph @_draw_square shape.color x y
+
+def get_state
+    mref state:u8 quitFlag:bool
+    *e @Event
+    for
+        *res @int 0
+        res e @sdl:poll_event
+        ifnot res
+            break
+        if e.type SDL_QUIT
+            quitFlag = true
+        if e.type SDL_KEYDOWN
+            if e.key.keysym.sym SDLK_UP
+                state = 1
+            elif e.key.keysym.sym SDLK_DOWN
+                state = 2
+            elif e.key.keysym.sym SDLK_LEFT
+                state = 3
+            elif e.key.keysym.sym SDLK_RIGHT
+                state = 4
+
+def delay
+    cref delay:int
+    @sdl:delay delay

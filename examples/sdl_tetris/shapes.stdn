@@ -1,0 +1,122 @@
+import sdl
+
+struct Cell
+    *x @int 0
+    *y @int 0
+
+enum ShapeType @u8 I=1 J L O S T Z
+
+struct Shape
+    *shapeType @ShapeType
+    *cells @array|Cell
+    *color @SDL_Color
+    *phase @int 0
+    *x @int 0
+    *y @int 0
+
+
+def rotate_shape
+    mref shape:Shape
+    if shape.shapeType ShapeType^O
+        return
+    *src @array|array|u8 @resize 4
+    *dst @array|array|u8 @resize 4
+    for *line in src
+        line @resize 4 @fill 0
+    for *line in dst
+        line @resize 4 @fill 0
+    for *cell in shape.cells
+        src|cell.y|cell.x = 1
+    dst|0|3 = src|0|0 # corners
+    dst|3|3 = src|0|3
+    dst|3|0 = src|3|3
+    dst|0|0 = src|3|0 
+    dst|1|3 = src|0|1 # side 1
+    dst|3|2 = src|1|3
+    dst|2|0 = src|3|2
+    dst|0|1 = src|2|0
+    dst|2|3 = src|0|2 # side 2
+    dst|3|1 = src|2|3
+    dst|1|0 = src|3|1
+    dst|0|2 = src|1|0
+    dst|1|2 = src|1|1 # center
+    dst|2|2 = src|1|2
+    dst|2|1 = src|2|2
+    dst|1|1 = src|2|1
+    for 3
+        *sum @u8 dst|0|0 + dst|1|0 dst|2|0 dst|3|0
+        ifnot sum
+            for *line in dst
+                for *j @int in 0;3;1
+                    *m @int j + 1
+                    line|j = line|m
+                line|3 = 0
+    for 3
+        *sum @u8 dst|0|0 + dst|0|1 dst|0|2 dst|0|3
+        ifnot sum
+            for *k @int in 0;4;1
+                for *j @int in 0;3;1
+                    *m @int j + 1
+                    dst|j|k = dst|m|k 
+                dst|3|k = 0
+    shape.cells @clear
+    for *i @int in 0;4;1
+        for *j @int in 0;4;1
+            if dst|i|j
+                shape.cells|* = j i
+        
+    
+def init_shape
+    mref shape:Shape
+    cref shapeType:ShapeType
+    shape.shapeType = shapeType
+    if shapeType ShapeType^I
+        shape.cells|* = 0 0
+        shape.cells|* = 0 1
+        shape.cells|* = 0 2
+        shape.cells|* = 0 3
+        *clr @SDL_Color 0x00 0xF0 0xF0 0xFF
+        shape.color = clr
+    elif shapeType ShapeType^J
+        shape.cells|* = 1 0
+        shape.cells|* = 1 1
+        shape.cells|* = 1 2
+        shape.cells|* = 0 2
+        *clr @SDL_Color 0x00 0x00 0xF0 0xFF
+        shape.color = clr
+    elif shapeType ShapeType^L
+        shape.cells|* = 0 0
+        shape.cells|* = 0 1
+        shape.cells|* = 0 2
+        shape.cells|* = 1 2
+        *clr @SDL_Color 0xF0 0xA0 0x00 0xFF
+        shape.color = clr
+    elif shapeType ShapeType^O
+        shape.cells|* = 0 0
+        shape.cells|* = 0 1
+        shape.cells|* = 1 0
+        shape.cells|* = 1 1
+        *clr @SDL_Color 0xF0 0xF0 0x00 0xFF
+        shape.color = clr
+    elif shapeType ShapeType^S
+        shape.cells|* = 2 0
+        shape.cells|* = 1 0
+        shape.cells|* = 1 1
+        shape.cells|* = 0 1
+        *clr @SDL_Color 0x00 0xF0 0x00 0xFF
+        shape.color = clr
+    elif shapeType ShapeType^T
+        shape.cells|* = 1 0
+        shape.cells|* = 0 1
+        shape.cells|* = 1 1
+        shape.cells|* = 2 1
+        *clr @SDL_Color 0xA0 0x00 0xF0 0xFF
+        shape.color = clr
+    elif shapeType ShapeType^Z
+        shape.cells|* = 0 0
+        shape.cells|* = 1 0
+        shape.cells|* = 1 1
+        shape.cells|* = 2 1
+        *clr @SDL_Color 0xF0 0x00 0x00 0xFF
+        shape.color = clr
+

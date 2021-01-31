@@ -19,6 +19,8 @@ struct Config
     string compiler;
     string makeTool;
     string libPath;
+    string sdlLibPath;
+    string sdlIncPath;
 };
 static Config cfg;
 
@@ -46,6 +48,8 @@ bool load_config(string fileName)
                 else if(key == "CC") cfg.compiler = value;
                 else if(key == "MAKE") cfg.makeTool = value;
                 else if(key == "LIB") cfg.libPath = value;
+                else if(key == "SDL_LIB") cfg.sdlLibPath = value;
+                else if(key == "SDL_INC") cfg.sdlIncPath = value;
             }
         }
         configFile.close();
@@ -86,6 +90,7 @@ int main(int argc, char** argv){\n\
         else\n\
             std::cout << e.what() << std::endl;\n\
     }\n\
+    return 0; \n\
 }\n";
     dest.close();
 }
@@ -196,6 +201,23 @@ bool create_module(const string &name, const string & inPath, const string & out
     return res;
 }
 
+string get_sdl_string(const vector<string> &modules, string & sdlInc, string & sdlLib)
+{
+    if(modules.size())
+    {
+        for(string module: modules)
+        {
+            if(module.find("sdl") == 0)
+            {
+                sdlInc = cfg.sdlIncPath;
+                sdlLib = cfg.sdlLibPath;
+                return " -lmingw32 -lSDL2main -lSDL2 -mwindows  -Wl,--no-undefined -Wl,--dynamicbase -Wl,--nxcompat -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lsetupapi -lversion -luuid ";
+            }
+        }
+    }
+    return "";
+}
+
 void create_makefile(const vector<string> &modules, const vector<string> &libObjectModules, const vector<string> &cppObjectModules,
     const string & inPath, const string & outPath, string mainFile)
 {
@@ -206,6 +228,10 @@ void create_makefile(const vector<string> &modules, const vector<string> &libObj
     string shellStr = "";
 #endif // _WIN32
 
+    string sdlInc = "";
+    string sdlLib = "";
+    string sdlFlags = get_sdl_string(modules, sdlInc, sdlLib);
+
     // https://www.gnu.org/software/make/manual/html_node/Goals.html
     // https://stackoverflow.com/questions/7353426/automatic-header-dependencies-with-gmake
     // https://gcc.gnu.org/onlinedocs/gcc/Preprocessor-Options.html
@@ -214,12 +240,15 @@ void create_makefile(const vector<string> &modules, const vector<string> &libObj
     string compilerPaths = "";
     if(cfg.compilerPaths.size() > 1)
         compilerPaths = string("PATH=") + cfg.compilerPaths;
+    if(sdlInc.size())
+        dest << "INCLUDE_PATHS=-I\"" << sdlInc << "\"\n";
 
     dest << compilerPaths + shellStr + "\n\
 CC=" + cfg.compiler + "\n\
-CFLAGS= -std=c++14 -Wall -fexceptions -std=c++14  -c \n\
-LIBS=\n\
-LFLAGS= -static-libstdc++ -static-libgcc -static -s\n";
+CFLAGS= -std=c++14 -Wall -fexceptions -c \n\
+LFLAGS= " + sdlFlags + "-static-libstdc++ -static-libgcc -static -s\n";
+    if(sdlLib.size())
+        dest << "LIBS=-L\"" + sdlLib << "\"\n";
     string s = "OBJECTS= ";
     if(modules.size())
     {
@@ -247,9 +276,9 @@ LFLAGS= -static-libstdc++ -static-libgcc -static -s\n";
     dest << s;
     dest << "all: project\n\
 project: $(OBJECTS)\n\
-\t$(CC) $(LFLAGS) $(LIBS) $(OBJECTS) -o " + exeFile + "\n\
+\t$(CC) $(INCLUDE_PATHS) $(LFLAGS) $(LIBS) $(OBJECTS) -o " + exeFile + "\n\
 %.o:  %.cpp \n\
-\t$(CC) $(CFLAGS) -MD -MP -MF ${@:.o=.d} $< \n\
+\t$(CC) $(CFLAGS) $(INCLUDE_PATHS) -MD -MP -MF ${@:.o=.d} $< \n\
 DEPS = $(OBJECTS:.o=.d)\n\
 ifneq ($(MAKECMDGOALS),clean)\n\
 -include $(DEPS)\n\

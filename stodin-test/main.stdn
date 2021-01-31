@@ -315,7 +315,7 @@ def main
     tests|*"string test" @^string_test:test
     tests|*"struct test" @test_struct
     for *pair in tests
-        @print* pair.first ": " pair.second "\n"  
+        @print* pair.first ": " pair.second$i32 "\n"  
     *allTestCount @int @size tests
     *successfulTests @int 0
     for *pair in tests

@@ -1,0 +1,121 @@
+import random
+import ^ shapes
+import ^ graph
+
+
+const BOX_WIDTH @int 10
+const BOX_HEIGHT @int 20
+const SQUARE_SIZE @int 20
+
+def test_shape_pos
+    mref res:bool
+    cref shape:Shape cells:array|array|u8
+    res = true
+    for *cell in shape.cells
+        *cellX @int cell.x + shape.x
+        *cellY @int cell.y + shape.y
+        res? < cellY BOX_HEIGHT; cellX BOX_WIDTH >= cellY 0; cellX 0 == cells|cellY|cellX 0 
+
+
+def change_position
+    mref shape:Shape
+    cref state:u8 cells:array|array|u8
+    *tempShape @Shape shape
+    if state 1
+        tempShape @rotate_shape
+    if state 2
+        tempShape.y + 1
+    if state 3
+        tempShape.x - 1
+    if state 4
+        tempShape.x + 1
+    *correct @bool @test_shape_pos tempShape cells
+    if correct
+        shape = tempShape
+
+def get_new_shape
+    mref shape:Shape
+    *shType @int @random:randint 1 7
+    shape @init_shape shType$ShapeType
+
+def check_bottom
+    mref shape:Shape cells:array|array|u8 score:u8 delay:int
+    *onBottom @bool false
+    for *cell in shape.cells
+        *nextY @int cell.y + shape.y + 1
+        *cellX @int cell.x + shape.x
+        if >= nextY BOX_HEIGHT
+            onBottom = true
+            break            
+        if cells|nextY|cellX
+            onBottom = true
+            break
+    if onBottom
+        for *cell in shape.cells
+            *cellX @int cell.x + shape.x
+            *cellY @int cell.y + shape.y
+            cells|cellY|cellX = 1
+        for *i @int in 1;BOX_HEIGHT;1
+            *fullLine @bool true
+            for *cell in cells|i
+                ifnot cell
+                    fullLine = false
+                    break
+            if fullLine
+                for *j @int in i;0;-1
+                    *prevIndex @int j - 1
+                    cells|j = cells|prevIndex
+                if < score BOX_HEIGHT 
+                    score + 1 
+                    delay - 1
+        shape.cells @clear
+        shape @get_new_shape
+        shape.y = 0
+        shape.x = 5 
+    
+
+def main
+    *graph @Graph @init
+    *quitFlag @bool false
+    *state @u8 0
+    *cells @array|array|u8 @resize BOX_HEIGHT
+    *score @u8 0
+    for *line in cells
+        line @resize BOX_WIDTH @fill 0
+    *shape @Shape @get_new_shape
+    *stepCounter @int 0
+    *delay @int 50
+    for
+        state quitFlag @get_state
+        if quitFlag
+            break
+        if state
+            shape @change_position state cells
+            state = 0
+        graph @clear_background
+        for *y @int in 0;BOX_HEIGHT;1
+            for *x @int in 0;BOX_WIDTH;1
+                if cells|y|x
+                    *yy @int y * SQUARE_SIZE + 20
+                    *xx @int x * SQUARE_SIZE + 20
+                    graph @draw_square 0 xx yy
+        graph @draw_shape shape
+        graph @draw_frame
+        for *i @u8 in 0;score;1
+            *clr @u8 i % 2
+            *x @i32 SQUARE_SIZE * 14
+            *y @i32 SQUARE_SIZE * i + 20
+            graph @draw_square clr x y
+        graph @draw_score_frame
+        graph @repaint
+        @^graph:delay delay
+        shape cells score delay @check_bottom
+        stepCounter + 1
+        if > stepCounter 10
+            shape @change_position 2 cells
+            stepCounter = 0
+    graph @close    
+        
+        
+        
+        
