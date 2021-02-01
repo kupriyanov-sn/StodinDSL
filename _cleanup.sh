@@ -13,6 +13,12 @@ rm -f examples/quadratic/*.exe
 rm -rf examples/prime_sieves/stodin-out
 rm -f examples/prime_sieves/*.exe
 
+rm -rf examples/four_heroes_game/stodin-out
+rm -f examples/four_heroes_game/*.exe
+
+rm -rf examples/sdl_tetris/stodin-out
+rm -f examples/sdl_tetris/*.exe
+
 rm -f stodin-compiler/compile
 rm -f stodin-compiler/config.cfg
 

@@ -2,7 +2,13 @@
 #define _STODIN_LIB_SDL_H
 
 #include <cstdint>
+
+#ifdef _WIN32
 #include <SDL.h>
+#else
+#include <SDL2/SDL.h>
+#endif // _WIN32
+
 #include "__stodin_string.h"
 
 namespace _stodin_lib_sdl

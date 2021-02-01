@@ -211,7 +211,11 @@ string get_sdl_string(const vector<string> &modules, string & sdlInc, string & s
             {
                 sdlInc = cfg.sdlIncPath;
                 sdlLib = cfg.sdlLibPath;
+#ifdef _WIN32
                 return " -lmingw32 -lSDL2main -lSDL2 -mwindows  -Wl,--no-undefined -Wl,--dynamicbase -Wl,--nxcompat -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lsetupapi -lversion -luuid ";
+#else
+                return " -lSDL2 ";
+#endif // _WIN32
             }
         }
     }
@@ -221,10 +225,11 @@ string get_sdl_string(const vector<string> &modules, string & sdlInc, string & s
 void create_makefile(const vector<string> &modules, const vector<string> &libObjectModules, const vector<string> &cppObjectModules,
     const string & inPath, const string & outPath, string mainFile)
 {
-    string exeFile = join(string(".."), mainFile + ".exe");
 #ifdef _WIN32
+    string exeFile = join(string(".."), mainFile + ".exe");
     string shellStr = "\nSHELL = cmd.exe";
 #else
+    string exeFile = join(string(".."), mainFile);
     string shellStr = "";
 #endif // _WIN32
 
@@ -242,11 +247,17 @@ void create_makefile(const vector<string> &modules, const vector<string> &libObj
         compilerPaths = string("PATH=") + cfg.compilerPaths;
     if(sdlInc.size())
         dest << "INCLUDE_PATHS=-I\"" << sdlInc << "\"\n";
-
+#ifdef _WIN32
     dest << compilerPaths + shellStr + "\n\
 CC=" + cfg.compiler + "\n\
 CFLAGS= -std=c++14 -Wall -fexceptions -c \n\
 LFLAGS= " + sdlFlags + "-static-libstdc++ -static-libgcc -static -s\n";
+#else
+    dest << compilerPaths + shellStr + "\n\
+CC=" + cfg.compiler + "\n\
+CFLAGS= -std=c++14 -Wall -fexceptions -c \n\
+LFLAGS= -s\n";
+#endif // _WIN32
     if(sdlLib.size())
         dest << "LIBS=-L\"" + sdlLib << "\"\n";
     string s = "OBJECTS= ";
@@ -274,6 +285,7 @@ LFLAGS= " + sdlFlags + "-static-libstdc++ -static-libgcc -static -s\n";
     s += "__stodin_common.o ";
     s += "main.o\n";
     dest << s;
+#ifdef _WIN32
     dest << "all: project\n\
 project: $(OBJECTS)\n\
 \t$(CC) $(INCLUDE_PATHS) $(LFLAGS) $(LIBS) $(OBJECTS) -o " + exeFile + "\n\
@@ -286,6 +298,20 @@ endif\n\
 clean:\n\
 \tdel *.out\n\
 .PHONY : clean\n";
+#else
+    dest << "all: project\n\
+project: $(OBJECTS)\n\
+\t$(CC) $(INCLUDE_PATHS) $(LFLAGS) $(LIBS) $(OBJECTS) " + sdlFlags + " -o "  + exeFile + "\n\
+%.o:  %.cpp \n\
+\t$(CC) $(CFLAGS) $(INCLUDE_PATHS) -MD -MP -MF ${@:.o=.d} $< \n\
+DEPS = $(OBJECTS:.o=.d)\n\
+ifneq ($(MAKECMDGOALS),clean)\n\
+-include $(DEPS)\n\
+endif\n\
+clean:\n\
+\tdel *.out\n\
+.PHONY : clean\n";
+#endif // _WIN32
     dest.close();
 }
 
@@ -412,7 +438,7 @@ int main(int argc, char** argv)
 #else
             int sysRes = system(("cd " + outPath + " ;make -f " +
                 "Makefile all ;").c_str());
-            if(!sysRes && runFlag) sysRes = system(("cd " + inPath + " ; ./" + mainFile + ".exe").c_str());
+            if(!sysRes && runFlag) sysRes = system(("cd " + inPath + " ; ./" + mainFile).c_str());
             else  cout << "System return value: " << sysRes << endl;
 #endif // _WIN32
         }

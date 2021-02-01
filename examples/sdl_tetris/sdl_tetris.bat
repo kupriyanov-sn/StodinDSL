@@ -1,2 +1,2 @@
-C:\stodin\stodin-compiler\compile.exe D:\StoreRoom\stodin_d\sdl_tetris\sdl_tetris -run
+C:\stodin\stodin-compiler\compile.exe C:\stodin\examples\sdl_tetris\sdl_tetris -run
 pause

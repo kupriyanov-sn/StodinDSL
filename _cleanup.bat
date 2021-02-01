@@ -13,6 +13,12 @@ del examples\quadratic\*.exe
 rmdir examples\prime_sieves\stodin-out /S /Q
 del examples\prime_sieves\*.exe
 
+rmdir examples\four_heroes_game\stodin-out /S /Q
+del examples\four_heroes_game\*.exe
+
+rmdir examples\sdl_tetris\stodin-out /S /Q
+del examples\sdl_tetris\*.exe
+
 del stodin-compiler\compile.exe
 del stodin-compiler\config.cfg
 
