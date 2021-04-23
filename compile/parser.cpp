@@ -30,62 +30,70 @@ bool parse(string line, string & outline, const vector<string> & flags)
     string errorString = "";
     size_t indents = 0;
     outline = "";
-    if(lexer::get_tokens(line, tokens, indents, errorString))
+    try
     {
-        if(tokens.size() == 0)
-            return true;
-        if((tokens.size() > 1) && (tokens[0] == "import"))
+        if(lexer::get_tokens(line, tokens, indents, errorString))
         {
-            if((tokens[1] == "^") && (tokens.size() > 2))
-                modules.push_back(tokens[2]);
-            else if((tokens[1] == "^cpp") && (tokens.size() > 2))
-                cppModules.push_back(tokens[2]);
-            else
-                libModules.push_back(tokens[1]);
-            return true;
-        }
-
-        string indentStr = "";
-        for(size_t i = 0; i < indents; ++i)
-            indentStr += "    ";
-        if(wait_cv_statement(tokens[0]))
-        {
-            outline += "){\n" + indentStr;
-        }
-        if(previousIndents > indents)
-        {
-            for(size_t i = 0; i < (previousIndents - indents); ++i)
-                outline += "}";
-            if(indents == 0)
+            if(tokens.size() == 0)
+                return true;
+            if((tokens.size() > 1) && (tokens[0] == "import"))
             {
-                check_in_struct_end(outline);
+                if((tokens[1] == "^") && (tokens.size() > 2))
+                    modules.push_back(tokens[2]);
+                else if((tokens[1] == "^cpp") && (tokens.size() > 2))
+                    cppModules.push_back(tokens[2]);
+                else
+                    libModules.push_back(tokens[1]);
+                return true;
             }
-            outline += "\n" + indentStr;
-        }
-        previousIndents = indents;
 
-        if(check_statements(tokens))
-        {
-            outline += do_statement_routine(tokens, indents, flags);
+            string indentStr = "";
+            for(size_t i = 0; i < indents; ++i)
+                indentStr += "    ";
+            if(wait_cv_statement(tokens[0]))
+            {
+                outline += "){\n" + indentStr;
+            }
+            if(previousIndents > indents)
+            {
+                for(size_t i = 0; i < (previousIndents - indents); ++i)
+                    outline += "}";
+                if(indents == 0)
+                {
+                    check_in_struct_end(outline);
+                }
+                outline += "\n" + indentStr;
+            }
+            previousIndents = indents;
+
+            if(check_statements(tokens))
+            {
+                outline += do_statement_routine(tokens, indents, flags);
+            }
+            else if(check_expr(tokens))
+            {
+                outline += do_expr_routine(tokens, flags);
+            }
+            else if(tokens.size() && tokens[0].size())
+            {
+                parser_error::add(line);
+                return false;
+            }
+
+            if(outline.size())
+                outline = indentStr + outline;
+
+            return true;
         }
-        else if(check_expr(tokens))
+        else
         {
-            outline += do_expr_routine(tokens, flags);
-        }
-        else if(tokens.size() && tokens[0].size())
-        {
-            parser_error::add(line);
+            parser_error::add(errorString);
             return false;
         }
-
-        if(outline.size())
-            outline = indentStr + outline;
-
-        return true;
     }
-    else
+    catch(...)
     {
-        parser_error::add(errorString);
+        parser_error::add(line);
         return false;
     }
     return true;

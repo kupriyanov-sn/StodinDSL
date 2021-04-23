@@ -70,6 +70,21 @@ namespace _stodin_lib_sdl
         res = static_cast<int64_t>(SDL_PollEvent(&event));
     }
     
+    void get_mouse_state(uint32_t & bitmask, int64_t & x, int64_t & y)
+    {
+        int xx = 0;
+        int yy = 0;
+        bitmask = SDL_GetMouseState(&xx, &yy);
+        x = static_cast<int64_t>(xx);
+        y = static_cast<int64_t>(yy);
+    }
+    
+    void show_simple_message_box(uint32_t flags, __stodin_string title, __stodin_string message)
+    {
+        SDL_ShowSimpleMessageBox(flags, title.get_string().c_str(), message.get_string().c_str(), NULL);
+    }
+
+    
     void delay(int64_t t)
     {
         SDL_Delay(static_cast<uint32_t>(t));

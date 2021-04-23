@@ -28,6 +28,8 @@ namespace _stodin_lib_sdl
     extern void render_draw_point(Renderer & renderer, int64_t x, int64_t y);
     extern void render_present(Renderer & renderer);
     extern void poll_event(int64_t & res, Event & event);
+    extern void get_mouse_state(uint32_t & bitmask, int64_t & x, int64_t & y);
+    extern void show_simple_message_box(uint32_t flags, __stodin_string title, __stodin_string message);
     extern void delay(int64_t t);
     extern void destroy_renderer(Renderer & renderer);
     extern void destroy_window(Window & window);

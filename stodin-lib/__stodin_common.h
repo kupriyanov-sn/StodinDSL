@@ -16,5 +16,6 @@ extern vector<string> __stodinTrace;
 extern void _stodin_parse_args(int argc, char** argv);
 extern void get_application_arg(__stodin_string & res, int64_t idx);
 extern void get_all_application_args(__stodin_array<__stodin_string> & res);
+extern string _stodin_get_trace();
 
 #endif // __STODIN_COMMON_H

@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <exception>
 #include <iterator>
+#include <cctype>
 
 #include "parser.h"
 #include "auxiliary.h"
@@ -64,34 +65,43 @@ string get_begin_lines(const string &header)
 namespace _stodin_module_" + header + "{\n";
 }
 
+
+
 void do_main_file(string outPath, string mainFile)
 {
     ofstream dest;
     dest.open(join(outPath, "main.cpp"));
-    dest <<
-"#include <iostream>\n\
-#include <exception>\n\
-#include \"__stodin_common.h\"\n\
-#include \"_stodin_module_" + mainFile + ".h\"\n\
-using namespace _stodin_module_" + mainFile + ";\n\
-int main(int argc, char** argv){\n\
-    try\n\
-    {\n\
-        _stodin_parse_args(argc, argv);\n\
-        _stodin_main();\n\
-    }\n\
-    catch(std::exception& e)\n\
-    {\n\
-        if(__stodinTrace.size())\n\
-        {\n\
-            for(auto s: __stodinTrace)\n\
-                std::cout << s << std::endl;\n\
-        }\n\
-        else\n\
-            std::cout << e.what() << std::endl;\n\
-    }\n\
-    return 0; \n\
-}\n";
+    string s = string("#include <iostream>\n") +
+"#include <exception>\n" +
+"#include \"__stodin_common.h\"\n" +
+"#include \"_stodin_module_" + mainFile + ".h\"\n" +
+"using namespace _stodin_module_" + mainFile + ";\n" +
+"int main(int argc, char** argv){\n" +
+"    try\n" +
+"    {\n" +
+"        _stodin_parse_args(argc, argv);\n" +
+"        _stodin_main();\n" +
+"    }\n" +
+"    catch(std::exception& e)\n" +
+"    {\n" +
+"        if(__stodinTrace.size())\n" +
+"        {\n" +
+"                std::cerr << _stodin_get_trace() << std::endl;\n" +
+"#ifdef SDL_h_\n" +
+"SDL_ShowSimpleMessageBox(0, \"error\", _stodin_get_trace().c_str(), NULL);\n" +
+"#endif // SDL_h_\n" +
+"       }\n" +
+"       else" +
+"       {\n" +
+"            std::cerr << e.what() << std::endl;\n" +
+"#ifdef SDL_h_\n" +
+"            SDL_ShowSimpleMessageBox(0, \"error\", e.what(), NULL);\n" +
+"#endif // SDL_h_\n" +
+"       }\n" +
+"    }\n" +
+"    return 0; \n" +
+"}\n";
+    dest << s;
     dest.close();
 }
 
@@ -109,11 +119,19 @@ static bool _get_long_line(ifstream & source, string &line)
     line = "";
     if(getline(source, line))
     {
-        while(line.size() && ((line.back() == '\n') || ((line.back() == '\r'))) )
+        while(line.size() && (isspace(line.back())))
             line.pop_back();
         while(line.size() && (line.back() == '\\') && (line.find('#') == string::npos))
         {
             line.pop_back();
+            string s;
+            if(getline(source, s))
+                line += s;
+            else
+                break;
+        }
+        while(line.size() && (line.back() == ';') && (line.find('#') == string::npos))
+        {
             string s;
             if(getline(source, s))
                 line += s;
@@ -367,6 +385,7 @@ int main(int argc, char** argv)
                 if(std::find(completedModules.begin(), completedModules.end(), module) == completedModules.end())
                 {
                     parser::clear_data();
+                    cout << "translating to C++: " << module << endl;
                     create_module(module, inPath, outPath, flags);
                     completedModules.push_back(module);
                     modules.erase(std::find(modules.begin(), modules.end(), module));

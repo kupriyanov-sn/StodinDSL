@@ -54,7 +54,7 @@ def set_file
         @_save_settings storage
         res = true
     else
-        @print "File doesn't exist!\n"
+        @print "File doesn\'t exist!\n"
         res = false
 
 def _load_settings

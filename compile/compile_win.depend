@@ -25,7 +25,7 @@
 	<string>
 	<vector>
 
-1609692090 source:c:\stodin\compile\main.cpp
+1619178063 source:c:\stodin\compile\main.cpp
 	<string>
 	<sstream>
 	<iostream>
@@ -33,10 +33,10 @@
 	<algorithm>
 	<exception>
 	<iterator>
+	<cctype>
 	"parser.h"
 	"auxiliary.h"
 	"parser_error.h"
-	<exception>
 	<cstdint>
 	<exception>
 
@@ -122,7 +122,7 @@
 	<algorithm>
 	"parser_ops.h"
 
-1592379356 source:c:\stodin\compile\parser_stmt.cpp
+1619179809 source:c:\stodin\compile\parser_stmt.cpp
 	<string>
 	<vector>
 	<map>

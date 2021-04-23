@@ -31,3 +31,11 @@ void get_all_application_args(__stodin_array<__stodin_string> & res)
     for(auto s: __stodinArgs)
         add(res, s);
 }
+
+string _stodin_get_trace()
+{
+    string res = "";
+    for(auto s: __stodinTrace)
+        res += s + "\n";
+    return res;
+}

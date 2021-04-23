@@ -203,7 +203,7 @@ string do_if_stmt_routine(vector<string> &tokens, bool ifnot = false)
         outline += "if(" + notPrep + "(";
         for(size_t i = 3; i < tokens.size(); ++i)
         {
-            outline += "(" + arg + " == " + tokens[i] + ")";
+            outline += "(" + check_aggregate(arg) + " == " + check_aggregate(tokens[i]) + ")";
             if(i < tokens.size() - 1)
                 outline += " || ";
         }
@@ -347,6 +347,21 @@ string do_constructor(const string & varName, vector<string> & tokens)
             }
             outline += check_aggregate(argsList.at(0).at(argsList.at(0).size() - 1)) + "};";
         }
+    }
+    else if(typeName.find("__stodin_array") == 0)
+    {
+        outline += typeName + " " + varName + " {{";
+        for(size_t j = 0; j < argsList.size(); ++j)
+        {
+            for(size_t i = 0; i < argsList.at(j).size() - 1; ++i)
+            {
+                outline += check_aggregate(argsList.at(j).at(i)) + ", ";
+            }
+            outline += check_aggregate(argsList.at(j).at(argsList.at(0).size() - 1)) + "}";
+            if(j != (argsList.size() - 1))
+                outline += ", {";
+        }
+        outline += "};";
     }
     else
     {

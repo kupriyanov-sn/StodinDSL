@@ -11,7 +11,7 @@ namespace _stodin_lib_random
     template <typename T>
     void shuffle(__stodin_array<T> &data)
     {
-        int64_t sz = 0; size(sz, data); sz--;
+        int64_t sz = 0; size(sz, data); sz-=2;
         for(int64_t i = sz; i > -1; i += -1)
         {
             int64_t j  {i};j += 1; randint(j, 0, j);
