@@ -1,0 +1,162 @@
+import random
+
+enum HeroType @u8 None Knight Nun Guard Mage Goblin Witch Troll Hydra Zombie Ghost Lich Vampire Mimic
+
+enum HeroAction @u8 None Attack Heal Stun Inspire MassAttack MassHeal SelfHeal MakeShield Ressurect Metamorphose
+
+struct Hero 
+    *type @HeroType
+    *health @int 50
+    *maxHealth @int 50
+    *maxStrength @int 12
+    *minStrength @int 6
+    *defence @int 30
+    *inspired @bool false
+    *stunned @bool false
+    *shielded @bool false
+    *actions @array|HeroAction
+    *mimicPoints @int 0
+    
+const HERO_TYPE_STRING @array|string "None" "Knight" "Nun" "Guard" "Mage" "Goblin" "Witch" "Troll" "Hydra" "Zombie" "Ghost" "Lich" "Vampire" "Mimic"
+const HERO_ACTION_STRING @array|string "Attack" "Heal" "Stun" "Inspire" "Mass attack" "Mass heal" "Ressurect" "Metamorphose"
+
+def print_hero
+    cref hero:Hero idx:int
+    *hti @int hero.type$int
+    @print* idx ". " HERO_TYPE_STRING|hti "   hp: " hero.health " (" hero.maxHealth ")"
+    if hero.stunned
+        @print ", stunned"
+    if hero.inspired
+        @print ", inspired"
+    @print ".\n"
+
+def make_knight
+    mref hero:Hero
+    hero.type = HeroType^Knight
+    hero.health = 50
+    hero.maxHealth = 50
+    hero.maxStrength = 15
+    hero.minStrength = 8
+    hero.defence = 30
+    hero.actions @add* HeroAction^Attack HeroAction^MassAttack HeroAction^Inspire 
+
+def make_guard
+    mref hero:Hero
+    hero.type = HeroType^Guard
+    hero.health = 60
+    hero.maxHealth = 60
+    hero.maxStrength = 9
+    hero.minStrength = 6
+    hero.defence = 50
+    hero.actions @add* HeroAction^Attack HeroAction^MakeShield HeroAction^SelfHeal HeroAction^Stun 
+
+def make_nun
+    mref hero:Hero
+    hero.type = HeroType^Nun
+    hero.health = 40
+    hero.maxHealth = 40
+    hero.maxStrength = 6
+    hero.minStrength = 3
+    hero.defence = 10
+    hero.actions @add* HeroAction^Attack HeroAction^Heal HeroAction^MassHeal HeroAction^Inspire
+
+def make_mage
+    mref hero:Hero
+    hero.type = HeroType^Mage
+    hero.health = 40
+    hero.maxHealth = 40
+    hero.maxStrength = 7
+    hero.minStrength = 4
+    hero.defence = 15
+    hero.actions @add* HeroAction^Attack HeroAction^Heal HeroAction^Stun HeroAction^MassAttack 
+
+def make_goblin
+    mref hero:Hero
+    hero.type = HeroType^Goblin
+    hero.health = 30
+    hero.maxHealth = 30
+    hero.maxStrength = 8
+    hero.minStrength = 5
+    hero.defence = 25
+    hero.actions @add* HeroAction^Attack HeroAction^Stun
+
+def make_witch
+    mref hero:Hero
+    hero.type = HeroType^Witch
+    hero.health = 40
+    hero.maxHealth = 40
+    hero.maxStrength = 7
+    hero.minStrength = 5
+    hero.defence = 15
+    hero.actions @add* HeroAction^Attack HeroAction^Heal HeroAction^Inspire
+
+def make_hydra
+    mref hero:Hero
+    hero.type = HeroType^Hydra
+    hero.health = 70
+    hero.maxHealth = 70
+    hero.maxStrength = 12
+    hero.minStrength = 12
+    hero.defence = 30
+    hero.actions @add* HeroAction^SelfHeal HeroAction^MassAttack HeroAction^Stun
+
+def make_troll
+    mref hero:Hero
+    hero.type = HeroType^Troll
+    hero.health = 100
+    hero.maxHealth = 100
+    hero.maxStrength = 15
+    hero.minStrength = 7
+    hero.defence = 30
+    hero.actions @add* HeroAction^Attack HeroAction^MakeShield HeroAction^Inspire
+
+def make_zombie
+    mref hero:Hero
+    hero.type = HeroType^Zombie
+    hero.health = 40
+    hero.maxHealth = 40
+    hero.maxStrength = 8
+    hero.minStrength = 8
+    hero.defence = 30
+    hero.actions @add* HeroAction^Attack
+
+def make_ghost
+    mref hero:Hero
+    hero.type = HeroType^Ghost
+    hero.health = 25
+    hero.maxHealth = 25
+    hero.maxStrength = 5
+    hero.minStrength = 5
+    hero.defence = 40
+    hero.actions @add* HeroAction^Attack HeroAction^Stun
+
+def make_vampire
+    mref hero:Hero
+    hero.type = HeroType^Vampire
+    hero.health = 60
+    hero.maxHealth = 100
+    hero.maxStrength = 12
+    hero.minStrength = 10
+    hero.defence = 40
+    hero.actions @add* HeroAction^Attack
+
+def make_lich
+    mref hero:Hero
+    hero.type = HeroType^Lich
+    hero.health = 60
+    hero.maxHealth = 60
+    hero.maxStrength = 12
+    hero.minStrength = 12
+    hero.defence = 40
+    hero.actions @add* HeroAction^Ressurect HeroAction^MassAttack
+
+def make_mimic
+    mref hero:Hero
+    hero.type = HeroType^Mimic
+    hero.health = 45
+    hero.maxHealth = 45
+    hero.maxStrength = 10
+    hero.minStrength = 8
+    hero.defence = 40
+    hero.actions @add HeroAction^Metamorphose
+

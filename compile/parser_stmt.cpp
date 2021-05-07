@@ -16,7 +16,7 @@ namespace parser
 {
 
 const vector<string> statements = {
-    "if", "ifnot", "elif", "else", "for", "in", "break", "continue",
+    "if", "ifnot", "elif", "else", "case", "|", "for", "in", "break", "continue",
     "return", "def", "mref", "cref", "thread",
     "typedef", "struct", "const", "enum",
     "try", "catch", "throw", "assert",
@@ -29,6 +29,27 @@ static bool mvStatementFlag = false;
 static bool staticDef = false;
 static vector<string> funcLines;
 static vector<string> typeLines;
+
+static bool inCase = false;
+static bool firstCaseStmt = false;
+static vector<string> caseHeader;
+static size_t caseIndents = 0;
+
+void clear_case_vars(const vector<string> &tokens, size_t indents)
+{
+    if(inCase)
+    {
+        if(tokens.size() && (tokens.at(0) == "|"))
+            return;
+        if(caseIndents >= indents)
+        {
+            inCase = false;
+            firstCaseStmt = false;
+            caseIndents = 0;
+            caseHeader.clear();
+        }
+    }
+}
 
 bool check_statements(const vector<string> &tokens)
 {
@@ -492,6 +513,50 @@ string do_statement_routine(vector<string> &tokens, size_t indents, const vector
     else if(stmtName == "else")
     {
         outline += "else{";
+        if(inCase && (indents == caseIndents))
+        {
+            inCase = false;
+            firstCaseStmt = false;
+            if(caseHeader.size())
+                caseHeader.clear();
+        }
+    }
+    else if(stmtName == "case")
+    {
+        if(inCase)
+            parser_error::add("Error! Only one case level available!");
+        if(tokens.size() > 1)
+            caseHeader = vector<string>(tokens.begin() + 1, tokens.end());
+        inCase = true;
+        firstCaseStmt = true;
+        caseIndents = indents;
+    }
+    else if(stmtName == "|")
+    {
+        if(!inCase)
+            parser_error::add("Condition is not in case statement!");
+        if(firstCaseStmt)
+        {
+            tokens.at(0) = "if";
+            firstCaseStmt = false;
+        }
+        else
+            tokens.at(0) = "elif";
+        if(caseHeader.empty())
+            throw logic_error("(case header empty)");
+        if(caseHeader.back().empty())
+            throw logic_error("(case header empty)");
+        auto lastChar = caseHeader.back().back();
+        if((lastChar == ':') || (lastChar == '.') || (lastChar == '^') || (lastChar == '|'))
+        {
+            tokens.at(1) = caseHeader.back() + tokens.at(1);
+            tokens.insert(tokens.begin() + 1, caseHeader.begin(), caseHeader.end() - 1);
+        }
+        else
+        {
+            tokens.insert(tokens.begin() + 1, caseHeader.begin(), caseHeader.end());
+        }
+        outline += do_statement_routine(tokens, indents, flags);
     }
 
     else if(stmtName == "for")

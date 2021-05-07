@@ -1,0 +1,387 @@
+import random
+import ^ hero
+import ^ graph
+import ^ action
+
+struct GameData
+    *goodHeroes @array|Hero 
+    *badHeroes @array|Hero
+    *good @bool true
+    *goodPointer @int 0
+    *badPointer @int 0
+    *action @HeroAction HeroAction^None
+    *actionPos @i32 -1
+    *enemyAction @HeroAction HeroAction^None
+    *enemyActionPos @i32 -1
+    *target @int -1
+    *turn @int 0
+    *goodTeamType @HeroType
+
+
+def clean_zero_health_heroes
+    mref heroes:array|Hero
+    *sz @int @size heroes - 1
+    for *i @int in sz;-1;-1
+        if <= heroes|i|.health 0
+            heroes @erase i
+
+
+def do_action
+    mref ourHeroes:array|Hero enemyHeroes:array|Hero
+    cref action:HeroAction selfIdx:int otherIdx:int good:bool
+    if ourHeroes|selfIdx|.type HeroType^Troll
+        ourHeroes|selfIdx @^action:self_heal
+    if ourHeroes|selfIdx|.type HeroType^Ghost
+        ourHeroes|selfIdx @^action:self_heal
+    case action ^hero:HeroAction^
+    |Attack
+        ourHeroes enemyHeroes @^action:attack selfIdx otherIdx good
+    |Stun
+        ourHeroes enemyHeroes @^action:stun selfIdx otherIdx good
+    |Heal
+        ourHeroes @^action:heel selfIdx otherIdx good
+    |MassHeal
+        ourHeroes @^action:heel_all selfIdx
+    |Inspire
+        ourHeroes @^action:inspires_all selfIdx                
+    |MassAttack
+        enemyHeroes @^action:attack_all_by ourHeroes|selfIdx
+    |SelfHeal
+        ourHeroes|selfIdx @^action:self_heal
+    |MakeShield
+        ourHeroes|otherIdx|.shielded = true
+    |Ressurect
+        ourHeroes @^action:ressurect selfIdx
+    |Metamorphose
+        ourHeroes|selfIdx @^action:metamorphose enemyHeroes|otherIdx
+    if != action HeroAction^Inspire
+        ourHeroes|selfIdx|.inspired = false
+    if > ourHeroes|selfIdx|.mimicPoints 0
+        ourHeroes|selfIdx|.mimicPoints - 1
+        if == ourHeroes|selfIdx|.mimicPoints 0
+            ourHeroes|selfIdx|.actions @clear
+            ourHeroes|selfIdx|.actions @add HeroAction^Metamorphose
+            ourHeroes|selfIdx|.type = HeroType^Mimic
+            ourHeroes|selfIdx @^action:self_heal
+    ourHeroes @clean_zero_health_heroes
+    enemyHeroes @clean_zero_health_heroes
+
+def take_turn
+    mref game:GameData
+    cref targetIdx:int
+    game.goodHeroes game.badHeroes @do_action game.action game.goodPointer targetIdx game.good
+    game.goodPointer + 1
+    game @change_indices
+    *bsz @int @size game.badHeroes
+    ifnot bsz
+        game.turn + 1
+        game.goodPointer = 0
+        game.badPointer = 0
+        game.badHeroes @make_bad_team game.turn game.goodTeamType
+        game.goodHeroes @random:shuffle
+        game.good = true
+    game.action = HeroAction^None
+    game.actionPos = -1
+    
+
+def change_indices
+    mref game:GameData
+    *gsz @int @size game.goodHeroes
+    *bsz @int @size game.badHeroes
+    *reset @bool >= game.goodPointer gsz ? game.badPointer bsz
+    if reset
+        game.goodPointer = 0
+        game.badPointer = 0
+    game.good = !game.good
+
+def make_bad_team
+    mref badHeroes:array|Hero
+    cref turn:int goodTeamType:HeroType
+    case turn
+    |0
+        if goodTeamType in HeroType^Hydra HeroType^Lich
+            badHeroes|* @^hero:make_guard
+            badHeroes|* @^hero:make_knight
+            badHeroes|* @^hero:make_mage
+            badHeroes|* @^hero:make_nun             
+        else
+            badHeroes|* @^hero:make_goblin
+            badHeroes|* @^hero:make_goblin
+            badHeroes|* @^hero:make_troll
+            badHeroes|* @^hero:make_witch            
+    |1
+        badHeroes|* @^hero:make_zombie
+        badHeroes|* @^hero:make_ghost
+        badHeroes|* @^hero:make_ghost
+        badHeroes|* @^hero:make_lich
+    |2
+        badHeroes|* @^hero:make_goblin
+        badHeroes|* @^hero:make_goblin
+        badHeroes|* @^hero:make_goblin
+        badHeroes|* @^hero:make_hydra
+    |3
+        if goodTeamType HeroType^Mimic
+            badHeroes|* @^hero:make_guard
+            badHeroes|* @^hero:make_knight
+            badHeroes|* @^hero:make_mage
+            badHeroes|* @^hero:make_nun             
+        else
+            badHeroes|* @^hero:make_mimic
+            badHeroes|* @^hero:make_mimic
+            badHeroes|* @^hero:make_mimic
+            badHeroes|* @^hero:make_mimic
+    |4
+        if goodTeamType HeroType^Mimic
+            badHeroes|* @^hero:make_ghost
+            badHeroes|* @^hero:make_lich
+            badHeroes|* @^hero:make_lich
+            badHeroes|* @^hero:make_zombie
+        elif goodTeamType HeroType^Lich
+            badHeroes|* @^hero:make_witch
+            badHeroes|* @^hero:make_troll
+            badHeroes|* @^hero:make_hydra            
+            badHeroes|* @^hero:make_hydra            
+        else
+            badHeroes|* @^hero:make_ghost
+            badHeroes|* @^hero:make_lich
+            badHeroes|* @^hero:make_vampire
+            badHeroes|* @^hero:make_vampire
+    *bsz @int @size badHeroes
+    if bsz
+        badHeroes @random:shuffle
+
+def team_menu
+    mref goodTeamType:HeroType graph:Graph
+    *quitFlag @bool false
+    *state @TargetType TargetType^None
+    *pos @int -1
+    *heroTeamTypes @array|HeroType HeroType^Nun HeroType^Hydra HeroType^Lich HeroType^Mimic
+    goodTeamType = HeroType^None
+    for
+        state pos quitFlag @^graph:get_state
+        if quitFlag
+            break
+        graph @^graph:clear_background
+        *counter @int 0
+        for *hero @HeroType in HeroType^Nun HeroType^Hydra HeroType^Lich HeroType^Mimic
+            graph @^graph:draw_hero_square hero$u8 counter
+            counter + 2
+            if counter 4
+                counter + 1
+        graph @^graph:repaint
+        @^graph:delay 10
+        if state TargetType^Hero 
+            *goodTeamIndex @int pos / 2
+            goodTeamType = heroTeamTypes|goodTeamIndex
+            break
+
+
+def make_good_team
+    mref goodHeroes:array|Hero
+    cref goodTeamType:HeroType
+    case goodTeamType HeroType^
+    |Nun
+        goodHeroes|* @^hero:make_guard
+        goodHeroes|* @^hero:make_knight
+        goodHeroes|* @^hero:make_mage
+        goodHeroes|* @^hero:make_nun 
+    |Hydra
+        goodHeroes|* @^hero:make_troll
+        goodHeroes|* @^hero:make_goblin
+        goodHeroes|* @^hero:make_witch
+        goodHeroes|* @^hero:make_hydra
+    |Lich
+        goodHeroes|* @^hero:make_lich
+        goodHeroes|* @^hero:make_ghost
+        goodHeroes|* @^hero:make_ghost
+        goodHeroes|* @^hero:make_vampire
+    else
+        goodHeroes|* @^hero:make_mimic
+        goodHeroes|* @^hero:make_mimic
+        goodHeroes|* @^hero:make_mimic
+        goodHeroes|* @^hero:make_mimic
+
+const ANIMATION_DELAY @int 500
+enum Stage @int Start=1 SelectAction=400 Animation=800 End=1000
+
+struct Animation
+    *indices @array|int
+    *action @HeroAction HeroAction^None
+
+def fill_animation_data
+    mref animation:Animation
+    cref game:GameData
+    animation.indices @clear
+    if game.good
+        animation.action = game.action
+        if game.action in HeroAction^Inspire HeroAction^MassHeal
+            *gsz @int @size game.goodHeroes
+            for *i @int in 0;gsz;1
+                *pos @int 3 - i
+                animation.indices @add pos
+        elif game.action in HeroAction^Attack HeroAction^Stun HeroAction^Metamorphose
+            *pos @int game.target + 4
+            animation.indices @add pos
+        elif game.action in HeroAction^Heal HeroAction^MakeShield HeroAction^SelfHeal
+            *pos @int 3 - game.target
+            animation.indices @add pos
+        elif game.action HeroAction^MassAttack
+            *bsz @int @size game.badHeroes
+            for *i @int in 0;bsz;1
+                *pos @int 4 + i
+                animation.indices @add pos
+    else
+        animation.action = game.enemyAction
+        if game.enemyAction in HeroAction^Inspire HeroAction^MassHeal
+            *bsz @int @size game.badHeroes
+            for *i @int in 0;bsz;1
+                *pos @int 4 + i
+                animation.indices @add pos
+        elif game.enemyAction in HeroAction^Attack HeroAction^Stun HeroAction^Metamorphose
+            *pos @int 3 - game.target
+            animation.indices @add pos
+        elif game.enemyAction in HeroAction^Heal HeroAction^MakeShield HeroAction^SelfHeal
+            *pos @int game.target + 4
+            animation.indices @add pos
+        elif game.enemyAction HeroAction^MassAttack
+            *gsz @int @size game.goodHeroes
+            for *i @int in 0;gsz;1
+                *pos @int 3 - i
+                animation.indices @add pos
+
+def main
+    *graph @Graph @init
+    *delay @int 1
+    *game @GameData
+    game.goodTeamType graph @team_menu
+    if != game.goodTeamType HeroType^None
+        game.goodHeroes @make_good_team game.goodTeamType
+        game.goodHeroes @random:shuffle
+    game.badHeroes @make_bad_team game.turn game.goodTeamType
+    *waitCounter @int 0
+    *enemyActionIndex @int -1
+    *animation @Animation
+    for
+        if game.goodTeamType HeroType^None
+            break
+        *pos @int -1
+        *state @TargetType TargetType^None
+        *quitFlag @bool false
+        state pos quitFlag @^graph:get_state
+        if quitFlag
+            break
+        if game.good
+            *gsz @int @size game.goodHeroes
+            if >= game.goodPointer gsz
+                game.good = !game.good
+                continue
+            if game.action HeroAction^None
+                game.actionPos = 0
+                game.action = game.goodHeroes|game.goodPointer|.actions|game.actionPos
+            if game.goodHeroes|game.goodPointer|.stunned
+                game.goodHeroes|game.goodPointer|.stunned = false
+                game.goodPointer + 1
+                game @change_indices
+                game.action = HeroAction^None
+                game.target = game.goodPointer
+                waitCounter = Stage^Animation$int
+            elif > pos -1           
+                if state TargetType^Action
+                    *asz @int @size game.goodHeroes|game.goodPointer|.actions
+                    if < pos asz
+                        game.action = game.goodHeroes|game.goodPointer|.actions|pos
+                        game.actionPos = pos
+                        if game.action in HeroAction^Inspire HeroAction^MassAttack HeroAction^MassHeal HeroAction^SelfHeal HeroAction^Ressurect
+                            game.target = game.goodPointer
+                            animation @fill_animation_data game
+                            waitCounter = Stage^Animation$int
+                elif state TargetType^Hero                
+                    if != game.action HeroAction^None
+                        game.target = 0
+                        if < pos 4
+                            if game.action in HeroAction^Attack HeroAction^Stun HeroAction^Metamorphose
+                                continue
+                            game.target = 3 - pos
+                            if >= game.target gsz
+                                continue
+                        else
+                            if game.action in HeroAction^Heal HeroAction^MakeShield
+                                continue
+                            game.target = pos - 4
+                            *bsz @int @size game.badHeroes
+                            if >= game.target bsz
+                                continue
+                        animation @fill_animation_data game
+                        waitCounter = Stage^Animation$int
+            if >= waitCounter Stage^Animation$int
+                waitCounter + 1
+            if >= waitCounter Stage^End$int
+                game @take_turn game.target
+                waitCounter = 0
+                game.target = 0
+                animation.action = HeroAction^None
+        else
+            *bsz @int @size game.badHeroes
+            if >= game.badPointer bsz
+                game.good = !game.good
+                continue
+            if waitCounter Stage^Start$int
+                game.enemyAction = HeroAction^None
+                if game.badHeroes|game.badPointer|.stunned
+                    game.badHeroes|game.badPointer|.stunned = false
+                    waitCounter = Stage^Animation$int
+                    game.target = game.badPointer
+                elif enemyActionIndex -1
+                    *asz @int @size game.badHeroes|game.badPointer|.actions
+                    if > asz 1
+                        enemyActionIndex @random:randint 1 asz - 1
+                    else
+                        enemyActionIndex = 0
+            elif waitCounter Stage^SelectAction$int
+                *gsz @int @size game.goodHeroes
+                if gsz
+                    game.enemyAction = game.badHeroes|game.badPointer|.actions|enemyActionIndex
+                    game.enemyActionPos = enemyActionIndex + 4
+                if bsz 1
+                    if > gsz 1
+                        game.badHeroes|0|.health / 2
+                        ifnot game.badHeroes|0|.health
+                            game.badHeroes|0|.health = 1
+            elif waitCounter Stage^Animation$int
+                *gsz @int @size game.goodHeroes
+                if gsz
+                    game.target = 0
+                    ifnot game.enemyAction in HeroAction^Heal HeroAction^MakeShield
+                        game.target @randint 1 gsz - 1
+                    elif game.enemyAction in HeroAction^SelfHeal HeroAction^Ressurect
+                        game.target = game.badPointer
+                    else
+                        game.target @randint 1 bsz - 1
+                    animation @fill_animation_data game
+                    game.badHeroes game.goodHeroes @do_action game.enemyAction game.badPointer game.target game.good
+            elif waitCounter Stage^End$int
+                game.enemyAction = HeroAction^None
+                enemyActionIndex = -1
+                game.badPointer + 1
+                game @change_indices
+                waitCounter = 0
+                animation.action = HeroAction^None
+            if < waitCounter Stage^End$int
+                waitCounter + 1                
+        graph @^graph:clear_background
+        if != game.action HeroAction^None
+            graph @draw_action_frame game.actionPos
+        if != game.enemyAction HeroAction^None
+            if > game.enemyActionPos 3
+                graph @draw_action_frame game.enemyActionPos
+        graph @^graph:draw_splitter @^graph:draw_frame 0xCC 10 ; 0x30 165
+        graph @^graph:draw_all_heroes game.goodHeroes game.badHeroes game.good game.goodPointer game.badPointer false #waitCounter$bool
+        graph @^graph:draw_animation animation.indices animation.action
+        graph @^graph:repaint
+        @^graph:delay delay
+    
+    graph @^graph:close    
+        
+        
+        
+        

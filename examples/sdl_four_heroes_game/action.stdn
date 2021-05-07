@@ -1,0 +1,119 @@
+import random
+import ^ hero
+
+typedef ^hero:Hero Hero
+typedef ^hero:HeroType HeroType
+
+
+def _destroy_by
+    mref enemyHero:Hero 
+    cref hero:Hero
+    *negDefence @int 100 - enemyHero.defence
+    if enemyHero.shielded
+        negDefence / 2
+        enemyHero.shielded = false
+    *r1 @int @random:randint hero.minStrength hero.maxStrength 
+    if hero.inspired
+        r1 = hero.maxStrength
+    r1 * negDefence / 100
+    enemyHero.health - r1
+
+def attack
+    mref ourHeroes:array|Hero enemyHeroes:array|Hero
+    cref selfIdx:int targetIdx:int good:bool
+    *ourSz @int @size ourHeroes
+    *enemySz @int @size enemyHeroes
+    if < targetIdx enemySz
+        enemyHeroes|targetIdx @_destroy_by ourHeroes|selfIdx 
+        if ourHeroes|selfIdx|.type HeroType^Vampire
+            ourHeroes|selfIdx|.health + 8
+            if > ourHeroes|selfIdx|.health ourHeroes|selfIdx|.maxHealth
+                ourHeroes|selfIdx|.health = ourHeroes|selfIdx|.maxHealth
+
+def stun
+    mref ourHeroes:array|Hero enemyHeroes:array|Hero
+    cref selfIdx:int targetIdx:int good:bool
+    *enemySz @int @size enemyHeroes
+    if < targetIdx enemySz
+        enemyHeroes|targetIdx|.health - ourHeroes|selfIdx|.minStrength
+        *stunChance @int @random:randint 0 100
+        if ourHeroes|selfIdx|.inspired
+            enemyHeroes|targetIdx|.health - 1
+            stunChance + 10
+        if > stunChance enemyHeroes|targetIdx|.defence
+            enemyHeroes|targetIdx|.stunned = true
+
+def heel
+    mref ourHeroes:array|Hero
+    cref selfIdx:int targetIdx:int good:bool
+    *ourSz @int @size ourHeroes
+    if < targetIdx ourSz
+        *r1 @int @random:randint 5 10
+        if ourHeroes|selfIdx|.inspired
+            r1 + 5
+        ourHeroes|targetIdx|.health + r1
+        if > ourHeroes|targetIdx|.health ourHeroes|targetIdx|.maxHealth
+            ourHeroes|targetIdx|.health = ourHeroes|targetIdx|.maxHealth 
+
+def heel_all
+    mref ourHeroes:array|Hero
+    cref selfIdx:int
+    for *hero in ourHeroes
+        *r1 @int @random:randint 2 4
+        if ourHeroes|selfIdx|.inspired
+            r1 + 1
+        hero.health + r1
+        if > hero.health hero.maxHealth
+            hero.health = hero.maxHealth
+
+def inspires_all
+    mref ourHeroes:array|Hero
+    cref selfIdx:int
+    for *hero in ourHeroes
+        hero.inspired = true                
+
+
+def attack_all_by
+    mref enemyHeroes:array|Hero
+    cref ourHero:Hero
+    for *hero in enemyHeroes
+        *r1 @int @random:randint 3 ourHero.minStrength
+        if ourHero.inspired
+            r1 + 1
+        hero.health - r1
+        
+def make_shield
+    mref hero:Hero
+    hero.shielded = true
+
+def self_heal
+    mref hero:Hero
+    *r1 @int @random:randint 4 5
+    if hero.inspired
+        r1 + 1
+    hero.health + r1
+    if > hero.health hero.maxHealth
+        hero.health = hero.maxHealth
+    
+
+def ressurect
+    mref ourHeroes:array|Hero
+    cref selfIdx:int
+    *ourSz @int @size ourHeroes
+    if < ourSz 4
+        ourHeroes|* @^hero:make_zombie
+    else
+        if < ourHeroes|selfIdx|.health ourHeroes|selfIdx|.maxHealth
+            ourHeroes|selfIdx|.health = ourHeroes|selfIdx|.maxHealth
+        else
+            for *hero in ourHeroes
+                if < hero.health hero.maxHealth
+                    hero.health = hero.maxHealth
+                    break
+
+def metamorphose
+    mref ourHero:Hero
+    cref enemyHero:Hero
+    ourHero.actions = enemyHero.actions
+    ourHero.type = enemyHero.type
+    ourHero.mimicPoints = 5

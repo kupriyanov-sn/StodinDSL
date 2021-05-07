@@ -63,6 +63,7 @@ bool parse(string line, string & outline, const vector<string> & flags)
                     check_in_struct_end(outline);
                 }
                 outline += "\n" + indentStr;
+                clear_case_vars(tokens, indents);
             }
             previousIndents = indents;
 

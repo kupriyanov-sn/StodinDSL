@@ -126,7 +126,11 @@ static bool _get_long_line(ifstream & source, string &line)
             line.pop_back();
             string s;
             if(getline(source, s))
+            {
+                while(s.size() && (isspace(s.back())))
+                    s.pop_back();
                 line += s;
+            }
             else
                 break;
         }
@@ -134,11 +138,15 @@ static bool _get_long_line(ifstream & source, string &line)
         {
             string s;
             if(getline(source, s))
+            {
+                while(s.size() && (isspace(s.back())))
+                    s.pop_back();
                 line += s;
+            }
             else
                 break;
         }
-        return true;
+         return true;
     }
     else
         return false;
@@ -166,6 +174,7 @@ bool create_module(const string &name, const string & inPath, const string & out
     while(_get_long_line(source, line))
     {
         parser_error::set_line(name, counter);
+        //cout << name << ": " << counter << endl;
         if(parser::parse(line, outLine, flags))
         {
             if(outLine.size())

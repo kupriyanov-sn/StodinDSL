@@ -103,7 +103,7 @@ bool get_tokens(string inputString, vector<string> &tokens, size_t &indents, str
                 token = "";
             }
         }
-        else if( (c == ';'))
+        else if(c == ';')
         {
             if(token.length())
             {
@@ -111,6 +111,15 @@ bool get_tokens(string inputString, vector<string> &tokens, size_t &indents, str
             }
             tokens.push_back(";");
             token = "";
+        }
+        else if(c == '|')
+        {
+            if(tokens.empty() && token.empty())
+            {
+                tokens.push_back("|");
+            }
+            else
+                token += c;
         }
         else if(ignoreChars.find(c) !=  string::npos)
         {

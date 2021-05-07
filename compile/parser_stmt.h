@@ -16,6 +16,7 @@ namespace parser
 
     extern string do_constructor(const string & varName, vector<string> & tokens);
     extern string do_statement_routine(vector<string> &tokens, size_t indents, const vector<string> & flags);
+    extern void clear_case_vars(const vector<string> &tokens, size_t indents);
     extern void stmt_clear();
 };
 

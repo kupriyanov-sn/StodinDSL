@@ -15,7 +15,7 @@
 	<iterator>
 	<sys/types.h>
 
-1596891013 source:c:\stodin\compile\lexer.cpp
+1619985475 source:c:\stodin\compile\lexer.cpp
 	<sstream>
 	<algorithm>
 	<iostream>
@@ -25,7 +25,7 @@
 	<string>
 	<vector>
 
-1619178063 source:c:\stodin\compile\main.cpp
+1620365922 source:c:\stodin\compile\main.cpp
 	<string>
 	<sstream>
 	<iostream>
@@ -47,7 +47,7 @@
 1591689444 c:\stodin\compile\parser_error.h
 	<string>
 
-1591688240 source:c:\stodin\compile\parser.cpp
+1619983004 source:c:\stodin\compile\parser.cpp
 	<string>
 	<vector>
 	<map>
@@ -72,7 +72,7 @@
 	<string>
 	<vector>
 
-1591688064 c:\stodin\compile\parser_stmt.h
+1619938254 c:\stodin\compile\parser_stmt.h
 	<string>
 	<vector>
 
@@ -122,7 +122,7 @@
 	<algorithm>
 	"parser_ops.h"
 
-1619179809 source:c:\stodin\compile\parser_stmt.cpp
+1620367275 source:c:\stodin\compile\parser_stmt.cpp
 	<string>
 	<vector>
 	<map>

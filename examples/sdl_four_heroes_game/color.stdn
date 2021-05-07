@@ -1,0 +1,28 @@
+import sdl
+
+#enum HeroType @u8 None Knight Nun Guard Mage Goblin Witch Troll Hydra Zombie Ghost Lich Vampire
+
+#enum HeroColor @u8 Black Blue Green   Orange Brown YellowGreen    Olive SlateGray Aqua   Silver LightCyan Magenta Purple  
+
+const _HERO_COLORS @array|SDL_Color  0 0 0 255 ; 0 0 255 255 ; 0 128 0 255 ;
+                                    255 165 0 255 ; 165 42 42 255 ; 154 205 50 255 ;
+                                    128 128 0 255 ; 112 128 144 255 ; 0 255 255 255 ;
+                                    192 192 192 255 ; 224 255 255 255 ; 255 0 255 255 ; 128 0 128 255 ; 80 80 80 255
+
+#enum HeroAction @u8 Attack Heal Stun Inspire MassAttack MassHeal SelfHeal MakeShield Ressurect
+
+#enum ActionColor @u8 Black Red Green Yellow Blue LightCoral Lime MintCream Orange LightGray 
+
+const _ACTION_COLORS @array|SDL_Color 0 0 0 255 ; 255 0 0 255 ; 0 128 0 255 ; 255 255 0 255 ; 
+                                      0 0 255 255 ; 240 128 128 255 ; 0 255 0 255 ;
+                                      245 255 250 255 ; 255 165 0 255 ; 211 211 211 255 ; 80 80 80 255
+
+def transform_hero_color
+    mref sdlColor:SDL_Color
+    cref color:u8
+    sdlColor = _HERO_COLORS|color
+    
+def transform_action_color
+    mref sdlColor:SDL_Color
+    cref color:u8
+    sdlColor = _ACTION_COLORS|color
