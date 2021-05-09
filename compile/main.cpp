@@ -228,13 +228,29 @@ bool create_module(const string &name, const string & inPath, const string & out
     return res;
 }
 
-string get_sdl_string(const vector<string> &modules, string & sdlInc, string & sdlLib)
+string get_sdl_string(const vector<string> &modules, const vector<string> &libObjectModules, string & sdlInc, string & sdlLib)
 {
     if(modules.size())
     {
         for(string module: modules)
         {
             if(module.find("sdl") == 0)
+            {
+                sdlInc = cfg.sdlIncPath;
+                sdlLib = cfg.sdlLibPath;
+#ifdef _WIN32
+                return " -lmingw32 -lSDL2main -lSDL2 -mwindows  -Wl,--no-undefined -Wl,--dynamicbase -Wl,--nxcompat -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lsetupapi -lversion -luuid ";
+#else
+                return " -lSDL2 ";
+#endif // _WIN32
+            }
+        }
+    }
+    if(libObjectModules.size())
+    {
+        for(string module: libObjectModules)
+        {
+            if(module.find("_lib_sdl") != string::npos)
             {
                 sdlInc = cfg.sdlIncPath;
                 sdlLib = cfg.sdlLibPath;
@@ -262,7 +278,7 @@ void create_makefile(const vector<string> &modules, const vector<string> &libObj
 
     string sdlInc = "";
     string sdlLib = "";
-    string sdlFlags = get_sdl_string(modules, sdlInc, sdlLib);
+    string sdlFlags = get_sdl_string(modules, libObjectModules, sdlInc, sdlLib);
 
     // https://www.gnu.org/software/make/manual/html_node/Goals.html
     // https://stackoverflow.com/questions/7353426/automatic-header-dependencies-with-gmake

@@ -1,7 +1,9 @@
 import random
+import time
 import ^ hero
 import ^ graph
 import ^ action
+
 
 struct GameData
     *goodHeroes @array|Hero 
@@ -53,7 +55,9 @@ def do_action
     |Ressurect
         ourHeroes @^action:ressurect selfIdx
     |Metamorphose
-        ourHeroes|selfIdx @^action:metamorphose enemyHeroes|otherIdx
+        *esz @int @size enemyHeroes
+        if < otherIdx esz
+            ourHeroes|selfIdx @^action:metamorphose enemyHeroes|otherIdx
     if != action HeroAction^Inspire
         ourHeroes|selfIdx|.inspired = false
     if > ourHeroes|selfIdx|.mimicPoints 0
@@ -201,8 +205,6 @@ def make_good_team
         goodHeroes|* @^hero:make_mimic
         goodHeroes|* @^hero:make_mimic
 
-const ANIMATION_DELAY @int 500
-enum Stage @int Start=1 SelectAction=400 Animation=800 End=1000
 
 struct Animation
     *indices @array|int
@@ -249,6 +251,9 @@ def fill_animation_data
                 *pos @int 3 - i
                 animation.indices @add pos
 
+const ANIMATION_DELAY @int 400
+enum Stage @int Start=1 SelectAction=400 Animation=800 End=1000
+
 def main
     *graph @Graph @init
     *delay @int 1
@@ -261,6 +266,7 @@ def main
     *waitCounter @int 0
     *enemyActionIndex @int -1
     *animation @Animation
+    *repaintCounter @int 0
     for
         if game.goodTeamType HeroType^None
             break
@@ -368,17 +374,20 @@ def main
                 animation.action = HeroAction^None
             if < waitCounter Stage^End$int
                 waitCounter + 1                
-        graph @^graph:clear_background
-        if != game.action HeroAction^None
-            graph @draw_action_frame game.actionPos
-        if != game.enemyAction HeroAction^None
-            if > game.enemyActionPos 3
-                graph @draw_action_frame game.enemyActionPos
-        graph @^graph:draw_splitter @^graph:draw_frame 0xCC 10 ; 0x30 165
-        graph @^graph:draw_all_heroes game.goodHeroes game.badHeroes game.good game.goodPointer game.badPointer false #waitCounter$bool
-        graph @^graph:draw_animation animation.indices animation.action
-        graph @^graph:repaint
-        @^graph:delay delay
+        repaintCounter + 1
+        if > repaintCounter 50
+            repaintCounter = 0
+            graph @^graph:clear_background
+            if != game.action HeroAction^None
+                graph @draw_action_frame game.actionPos
+            if != game.enemyAction HeroAction^None
+                if > game.enemyActionPos 3
+                    graph @draw_action_frame game.enemyActionPos
+            graph @^graph:draw_splitter @^graph:draw_frame 0xCC 10 ; 0x30 165
+            graph @^graph:draw_all_heroes game.goodHeroes game.badHeroes game.good game.goodPointer game.badPointer false #waitCounter$bool
+            graph @^graph:draw_animation animation.indices animation.action
+            graph @^graph:repaint
+        @time:ms_sleep delay
     
     graph @^graph:close    
         
