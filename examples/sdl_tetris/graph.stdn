@@ -1,4 +1,5 @@
 import sdl
+import time
 import ^ shapes
 
 const SCREEN_WIDTH @int 340
@@ -99,7 +100,9 @@ def get_state
                 state = 3
             elif e.key.keysym.sym SDLK_RIGHT
                 state = 4
+            elif e.key.keysym.sym SDLK_SPACE
+                state = 9
 
 def delay
     cref delay:int
-    @sdl:delay delay
+    @time:ms_sleep delay

@@ -85,10 +85,17 @@ def main
     *shape @Shape @get_new_shape
     *stepCounter @int 0
     *delay @int 50
+    *pauseState @bool false
     for
         state quitFlag @get_state
         if quitFlag
             break
+        if state 9
+            pauseState = !pauseState
+            state = 0
+        if pauseState
+            @^graph:delay delay
+            continue
         if state
             shape @change_position state cells
             state = 0
