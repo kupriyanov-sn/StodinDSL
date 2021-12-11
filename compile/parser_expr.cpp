@@ -18,6 +18,8 @@ namespace parser
 
 bool check_expr(const vector<string> &tokens)
 {
+    if(tokens.size() && (tokens[0].size()) && (tokens[0][0] == '*')) // constructor
+        return true;
     for(size_t i = 0; i < tokens.size(); ++i)
     {
         string s = tokens[i];
@@ -40,6 +42,10 @@ static void get_accums(vector<vector<string> > & accums, bool & constrFlag, vect
         if(s == ";")
         {
             accums.push_back(vector<string>());
+        }
+        else if(constrFlag && (is_string(s) || is_int(s) || is_double(s) || is_bool(s)))
+        {
+            break;
         }
         else if (is_func_or_operator(s) )
         {

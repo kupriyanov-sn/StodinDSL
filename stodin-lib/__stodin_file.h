@@ -5,6 +5,7 @@
 #include <string>
 #include <cstdint>
 #include "__stodin_string.h"
+#include "__stodin_array.h"
 
 using namespace std;
 
@@ -23,6 +24,9 @@ class __stodin_file
         friend void read(__stodin_file & f, __stodin_string &data, const uint64_t n);
         friend void getline(__stodin_string &data, __stodin_file & f);
         friend void getline(__stodin_string &data, __stodin_file & f, const char delim);
+        friend void getlines(__stodin_array<__stodin_string> &data, __stodin_file & f);
+        friend void get_state_string(__stodin_string &res, const __stodin_file & f);
+        friend void clear_errors(__stodin_file & f);
 
         virtual ~__stodin_file();
 

@@ -75,15 +75,15 @@ class __stodin_dict
 
         friend void find(__stodin_dict<TKey, TValue>& dict, pair<TKey, TValue> & keyValue, __stodin_bool & exist, const TKey & key)
         {
-            pair<TKey, TValue> res = dict._dict.found(key);
+            pair<TKey, TValue> res = dict._dict.find(key);
             exist = (res != dict._dict.end());
             if(exist)
                 keyValue = res;
         }
 
-        friend void has_key(__stodin_dict<TKey, TValue>& dict, __stodin_bool & exist, const TKey & key)
+        friend void has_key(__stodin_bool & exist, const __stodin_dict<TKey, TValue>& dict, const TKey & key)
         {
-            exist = (dict._dict.found(key) != dict._dict.end());
+            exist = (dict._dict.find(key) != dict._dict.end());
         }
 
         // "for each" methods

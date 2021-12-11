@@ -207,6 +207,17 @@ void size(int64_t & sz, const __stodin_string & str)
     sz = str._str.size();
 }
 
+void utf8_size(int64_t & sz, const __stodin_string & str)
+{
+    sz = 0;
+    for(auto ch: str._str)
+    {
+        uint8_t code = static_cast<uint8_t>(ch) & 0xC0;
+        if(code != 0x80)
+            sz++;
+    }
+}
+
 void empty(__stodin_bool &res, const __stodin_string& str) noexcept
 {
     res = str._str.empty();

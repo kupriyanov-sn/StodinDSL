@@ -1,0 +1,10 @@
+
+struct Button
+    *x @i32 0
+    *y @i32 0
+    *height @i32 0
+    *width @i32 0
+    *text @string ""
+    *id @string ""
+    *checked @bool false
+    

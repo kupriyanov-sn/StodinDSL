@@ -119,7 +119,10 @@ class __stodin_array
             else
                 pos = -1;
         }
-
+        friend __stodin_bool operator== (const __stodin_array<T>& lhs, const __stodin_array<T>& rhs) noexcept
+        {
+            return lhs._array == rhs._array;
+        }
         // "for each" methods
         typedef typename vector<T>::iterator iter;
         typedef typename vector<T>::const_iterator c_iter;

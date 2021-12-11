@@ -1,0 +1,377 @@
+import random
+import math
+import ^ graph
+
+const DEFAULT_PATH @string "picture.txt"
+
+def save_picture
+    cref picture:array|u8
+    *outFile @file @set_mode "w" @open DEFAULT_PATH
+    *lineCounter @int 0
+    for *p in picture
+        if > p -1
+            *ch @i8 "0" + p
+            outFile @write ch
+        else
+            outFile @write "`"
+        lineCounter + 1
+        if >= lineCounter ^graph:NET_WIDTH
+            outFile @write "\n"
+            lineCounter = 0
+    outFile @close 
+    
+    
+def load_picture
+    mref picture:array|u8
+    picture @clear @resize 6400
+    *inFile @file @set_mode "r" @open DEFAULT_PATH
+    *lines @array|string 
+    lines inFile @getlines
+    *index @int 0
+    for *line in lines
+        for *ch in line
+            ch - "0"
+            picture|index = ch$int
+            index + 1
+        *sz @int @size line
+        *psz @int ^graph:NET_WIDTH - sz
+        index + psz
+    inFile @close 
+    
+def set_picture_pixel
+    mref picture:array|u8
+    cref x:int y:int colorIndex:int
+    *index @int y * ^graph:NET_WIDTH + x
+    picture|index = colorIndex
+    
+
+def fill_line
+    mref picture:array|u8
+    cref x0:int y0:int x1:int y1:int colorIndex:int
+    if x0 -1
+        picture @set_picture_pixel x1 y1 colorIndex
+        return    
+    if x0 x1
+        if y0 y1 
+            picture @set_picture_pixel x1 y1 colorIndex
+            return    
+    *deltaX @int x1 - x0 @math:abs
+    *deltaY @int y1 - y0 @math:abs
+    *dirY @int 0
+    if > y0 y1
+        dirY = -1
+    if < y0 y1
+        dirY = 1
+    *dirX @int 0
+    if > x0 x1
+        dirX = -1 
+    if < x0 x1
+        dirX = 1 
+    if > deltaX deltaY   
+        *error @int 0
+        *deltaError @int deltaY + 1
+        *y @int y0
+        *xBorder0 @int x0
+        *xBorder1 @int x1
+        if < x1 x0
+            xBorder0 = x1
+            xBorder1 = x0 + 1
+            y = y1
+            dirY * -1
+        for *x in xBorder0;xBorder1;1
+            picture @set_picture_pixel x y colorIndex
+            error + deltaError
+            *deltaXInc @int deltaX + 1
+            if >= error deltaXInc
+                y + dirY
+                error - deltaX 1
+    else
+        *error @int 0
+        *deltaError @int deltaX + 1
+        *x @int x0
+        *yBorder0 @int y0
+        *yBorder1 @int y1
+        if < y1 y0
+            yBorder0 = y1
+            yBorder1 = y0 + 1
+            x = x1
+            dirX * -1
+        for *y @int in yBorder0;yBorder1;1
+            picture @set_picture_pixel x y colorIndex
+            error + deltaError
+            *deltaYInc @int deltaY + 1
+            if >= error deltaYInc
+                x + dirX
+                error - deltaY 1
+        
+
+def fill_rect
+    mref picture:array|u8
+    cref x0:int y0:int x1:int y1:int colorIndex:int
+    *xx0 @int x0
+    *xx1 @int x1
+    *yy0 @int y0
+    *yy1 @int y1
+    if < x1 x0
+        xx0 = x1
+        xx1 = x0
+    if < y1 y0
+        yy0 = y1
+        yy1 = y0       
+    for *y @int in yy0;yy1+1;1
+        for *x @int in xx0;xx1+1;1
+            picture @set_picture_pixel x y colorIndex
+
+def move_picture
+    mref picture:array|u8
+    cref lastPicture:array|u8 x0:int y0:int x1:int y1:int
+    *xShift @int x0 - x1
+    *yShift @int y0 - y1
+    for *y @int in 0;NET_HEIGHT;1
+        *newY @int y + yShift
+        if < newY 0
+            newY + NET_HEIGHT
+        if >= newY NET_HEIGHT
+            newY - NET_HEIGHT
+        for *x @int in 0;NET_WIDTH;1
+            *newX @int x + xShift
+            if < newX 0
+                newX + NET_WIDTH
+            if >= newX NET_WIDTH
+                newX - NET_WIDTH
+            *index @int y * ^graph:NET_WIDTH + x
+            *newIndex @int newY * ^graph:NET_WIDTH + newX
+            picture|index = lastPicture|newIndex
+            
+    
+    
+def fill_checkers
+    mref picture:array|u8
+    cref x0:int y0:int x1:int y1:int colorIndex:int colorIndexRight:int
+    *xx0 @int x0
+    *xx1 @int x1
+    *yy0 @int y0
+    *yy1 @int y1
+    if < x1 x0
+        xx0 = x1
+        xx1 = x0
+    if < y1 y0
+        yy0 = y1
+        yy1 = y0       
+    for *y @int in yy0;yy1+1;1
+        for *x @int in xx0;xx1+1;1
+            *i @int y + x % 2
+            if i
+                picture @set_picture_pixel x y colorIndex
+            else
+                picture @set_picture_pixel x y colorIndexRight
+
+def use_picker
+    mref colorIndex:int
+    cref picture:array|u8 x:int y:int
+    *index @int y * ^graph:NET_WIDTH + x
+    colorIndex = picture|index
+
+def repaint
+    mref picture:array|u8 colorIndex:int
+    cref x:int y:int
+    *index @int y * ^graph:NET_WIDTH + x
+    *repaintIndex @int picture|index
+    for *p in picture
+        if p repaintIndex
+            p = colorIndex
+
+struct Point 
+    *x @int 0
+    *y @int 0
+
+def floodfill
+    mref picture:array|u8
+    cref colorIndex:int x:int y:int
+    *index @int y * ^graph:NET_WIDTH + x
+    *repaintIndex @int picture|index
+    if repaintIndex colorIndex
+        return
+    *point @Point x y    
+    *queue @array|Point @add point
+    picture|index = colorIndex
+    for
+        *sz @int @size queue
+        ifnot sz
+            break
+        if > sz 16000
+            break
+        point = queue|0
+        queue @erase 0
+        index = point.y * ^graph:NET_WIDTH + point.x
+        *xInc @int point.x + 1
+        if < xInc ^graph:NET_WIDTH
+            index = point.y * ^graph:NET_WIDTH + xInc
+            if picture|index repaintIndex
+                picture|index = colorIndex
+                queue|* = xInc point.y
+        *xDec @int point.x - 1
+        if >= xDec 0
+            index = point.y * ^graph:NET_WIDTH + xDec
+            if picture|index repaintIndex
+                picture|index = colorIndex
+                queue|* = xDec point.y
+        *yInc @int point.y + 1
+        if < yInc ^graph:NET_HEIGHT
+            index = yInc * ^graph:NET_WIDTH + point.x
+            if picture|index repaintIndex
+                picture|index = colorIndex
+                queue|* = point.x yInc
+        *yDec @int point.y - 1
+        if >= yDec 0
+            index = yDec * ^graph:NET_WIDTH + point.x
+            if picture|index repaintIndex
+                picture|index = colorIndex
+                queue|* = point.x yDec
+
+enum DrawMode @u8 Line Rect Checkers Picker Fill Repaint Move
+
+def main
+    *graph @Graph @init
+    *quitFlag @bool false
+    *picture @array|u8 @resize 6400 48
+    *undoPictures @array|array|u8 @add picture
+    *colorIndex @int 27
+    *colorIndexRight @int 48
+    *repaintCounter @int 0
+    *oldClock @int -1
+    *lastNetX @int -1
+    *lastNetY @int -1
+    *previousId @string ""
+    graph @add_button "undo"   "ОТМЕНИТЬ" 0;
+                      "line"   "ЛИНИЯ" 15;
+                      "rect"   "ПРЯМОУГОЛЬНИК" 0;
+                      "checkers" "ШАШКИ" 0;
+                      "picker" "ПИПЕТКА" 15;
+                      "fill"   "ЗАЛИВКА" 0;
+                      "repaint" "ПЕРЕКРАШИВАНИЕ" 0;
+                      "clear"  "ОЧИСТИТЬ" 0;
+                      "move"   "ДВИГАТЬ" 15;
+                      "save"   "СОХРАНИТЬ TXT" 15;
+                      "load"   "ЗАГРУЗИТЬ TXT" 0
+    graph @change_button_state "line"
+    *drawMode @DrawMode DrawMode^Line
+    for
+        *x @int -1
+        *y @int -1
+        *id @string ""
+        *leftButton @bool true
+        x y id leftButton quitFlag @get_state graph
+        if quitFlag
+            break
+        if != id ""
+            if id "picture"
+                *clrIndex @int colorIndexRight
+                if leftButton
+                    clrIndex = colorIndex
+                if drawMode DrawMode^Line
+                    picture @fill_line lastNetX lastNetY x y clrIndex
+                    lastNetX = x
+                    lastNetY = y
+                elif drawMode DrawMode^Rect
+                    if lastNetX -1
+                        lastNetX = x
+                        lastNetY = y
+                    picture @fill_rect lastNetX lastNetY x y clrIndex
+                elif drawMode DrawMode^Move
+                    if lastNetX -1
+                        lastNetX = x
+                        lastNetY = y
+                    picture @move_picture undoPictures|-1 lastNetX lastNetY x y
+                elif drawMode DrawMode^Checkers
+                    if lastNetX -1
+                        lastNetX = x
+                        lastNetY = y
+                    picture @fill_checkers lastNetX lastNetY x y colorIndex colorIndexRight
+                elif drawMode DrawMode^Picker
+                    clrIndex @use_picker picture x y
+                    if leftButton
+                        colorIndex = clrIndex
+                    else
+                        colorIndexRight = clrIndex
+                elif drawMode DrawMode^Repaint
+                    if leftButton
+                        clrIndex = colorIndex
+                    else
+                        clrIndex = colorIndexRight
+                    picture @repaint clrIndex x y
+                elif drawMode DrawMode^Fill
+                    if leftButton
+                        clrIndex = colorIndex
+                    else
+                        clrIndex = colorIndexRight
+                    picture @floodfill clrIndex x y
+            elif id "palette"
+                if leftButton
+                    colorIndex = x * ^graph:PALETTE_HEIGHT + y
+                else
+                    colorIndexRight = x * ^graph:PALETTE_HEIGHT + y
+            elif != id "window event" #buttons
+                graph @change_button_state id
+                if id "clear"
+                    for *p in picture
+                        p = colorIndexRight
+                if id "load"
+                    picture @load_picture
+                    undoPictures @clear
+                    undoPictures|* = picture
+                if id "save"
+                    @save_picture picture
+                if id "line"
+                    drawMode = DrawMode^Line
+                if id "rect"
+                    drawMode = DrawMode^Rect
+                if id "checkers"
+                    drawMode = DrawMode^Checkers
+                if id "checkers"
+                    drawMode = DrawMode^Checkers
+                if id "picker"
+                    drawMode = DrawMode^Picker
+                if id "fill"
+                    drawMode = DrawMode^Fill
+                if id "repaint"
+                    drawMode = DrawMode^Repaint
+                if id "move"
+                    drawMode = DrawMode^Move
+                if id "undo"
+                    if previousId ""
+                        *sz @int @size undoPictures
+                        if > sz 0
+                            if picture undoPictures|-1
+                                undoPictures @erase -1 # current picture copy
+                                sz - 1
+                            if > sz 0
+                                picture = undoPictures|-1
+                            if > sz 1
+                                undoPictures @erase -1                    
+        else
+            lastNetX = -1
+            lastNetY = -1            
+            if previousId "picture"
+                undoPictures @add picture
+        previousId = id
+        repaintCounter + 1
+        *clock @int @^graph:ms_clock
+        *delta @int clock - oldClock
+        *needToRewrite @bool >= delta 20
+        needToRewrite? != id ""
+        needToRewrite!? >= delta 1000
+        if needToRewrite
+            oldClock = clock
+            graph @clear_background
+            graph @draw_picture picture
+            graph @draw_small_picture picture
+            graph @draw_net
+            graph @draw_palette colorIndex colorIndexRight
+            graph @draw_buttons
+            graph @repaint
+    graph @close    
+        
+        
+        
+        

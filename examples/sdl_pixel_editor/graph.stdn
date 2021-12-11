@@ -1,0 +1,397 @@
+import math
+import time
+import sdl
+import ^ font_dict
+import ^ button
+
+const SCREEN_WIDTH @int 810
+const SCREEN_HEIGHT @int 660
+
+struct Graph
+    *renderer @Renderer 0
+    *window @Window 0
+    *colors @array|SDL_Color
+    *buttons @array|Button
+    *fontDict @dict|string,uint
+
+def init
+    mref graph:Graph
+    @sdl:init SDL_INIT_VIDEO
+    @sdl:set_hint SDL_HINT_RENDER_SCALE_QUALITY "1"
+    graph.window @sdl:create_window "Мозаика" SDL_WINDOWPOS_UNDEFINED SDL_WINDOWPOS_UNDEFINED SCREEN_WIDTH SCREEN_HEIGHT SDL_WINDOW_SHOWN
+    graph.renderer graph.window @sdl:create_renderer -1 SDL_RENDERER_ACCELERATED
+    graph.renderer @sdl:set_render_draw_color 0xFF 0xFF 0xFF 0xFF
+    graph.colors @fill_colors
+    graph.fontDict @^font_dict:init
+    
+def close
+    mref graph:Graph
+    graph.renderer @sdl:destroy_renderer
+    graph.window @sdl:destroy_window
+    @sdl:quit
+
+def clear_background
+    mref graph:Graph
+    graph.renderer @sdl:set_render_draw_color 0x0F 0x0F 0x0F 0xFF
+    graph.renderer @sdl:render_clear
+
+def repaint
+    mref graph:Graph
+    graph.renderer @sdl:render_present
+
+def draw_point
+    mref graph:Graph
+    cref x:int y:int
+    graph.renderer @sdl:set_render_draw_color 0xDD 0xDD 0xDD 0xFF
+    graph.renderer @sdl:render_draw_point x y
+
+def draw_letter
+    mref graph:Graph 
+    cref letter:string x:int y:int
+    *code @uint graph.fontDict|"?"
+    if *b @bool in b @has_key graph.fontDict letter 
+        code = graph.fontDict|letter
+    *index @uint 1
+    for *yy in 0;8;1
+        for *xx in 0;8;1
+            *codeMask @uint code & index
+            if codeMask
+                *xCoord @int xx + x
+                *yCoord @int yy + y
+                graph @^graph:draw_point xCoord yCoord
+            try
+                index << 1
+            catch domain_error e
+                break
+
+def draw_text    
+    mref graph:Graph
+    cref text:string x:int y:int
+    *sz @int @size text
+    *xCoord @int x
+    *index @int 0
+    for
+        *letter @string ""
+        *code @u8 text|index$u8 & 0xC0
+        if code 0xC0
+            for
+                letter + text|index
+                index + 1
+                if >= index sz
+                    break
+                code = text|index$u8 & 0xC0
+                if < code 0x80
+                    break
+                if code 0xC0
+                    break
+        else
+            letter + text|index
+            index + 1
+        graph @draw_letter letter xCoord y
+        xCoord + 8
+        if >= index sz
+            break
+
+
+const NET_WIDTH @int 80
+const NET_HEIGHT @int 80
+const CELL_SIZE @int 8
+const NET_X_SHIFT @int 150
+const NET_Y_SHIFT @int CELL_SIZE
+
+def add_button
+    mref graph:Graph
+    cref id:string text:string shift:i32
+    graph.buttons @add
+    graph.buttons|-1|.id = id
+    graph.buttons|-1|.text = text
+    graph.buttons|-1|.x = 10
+    *sz @int @size graph.buttons
+    if > sz 1
+        graph.buttons|-1|.y = graph.buttons|-2|.y + 25 shift        
+    else
+        graph.buttons|-1|.y = 230
+    graph.buttons|-1|.width = NET_X_SHIFT$i32 - graph.buttons|-1|.x graph.buttons|-1|.x
+    graph.buttons|-1|.height = 8 + 10
+
+def draw_buttons
+    mref graph:Graph
+    for *button in graph.buttons
+        *outlinedRect @SDL_Rect button.x button.y button.width button.height
+        if button.checked
+            graph.renderer @sdl:set_render_draw_color 0xFF 0xFF 0xFF 0xFF
+        else
+            graph.renderer @sdl:set_render_draw_color 0x80 0x80 0x80 0xFF
+        graph.renderer @sdl:render_draw_rect outlinedRect
+        *sz @int @utf8_size button.text
+        sz * 8
+        *xText @int button.width$int - sz / 2 + button.x$int
+        *yText @int button.y$int + 5
+        graph @draw_text button.text xText yText
+    
+def draw_net
+    mref graph:Graph
+    graph.renderer @sdl:set_render_draw_color 0x88 0x92 0x88 0xFF
+    *border @int NET_WIDTH + 1
+    for *x in 0;border;1
+        *x1 @int x * CELL_SIZE + NET_X_SHIFT
+        *y1 @int NET_Y_SHIFT
+        *x2 @int x * CELL_SIZE + NET_X_SHIFT
+        *y2 @int NET_HEIGHT * CELL_SIZE + NET_Y_SHIFT
+        graph.renderer @sdl:render_draw_line x1 y1 x2 y2
+    border = NET_HEIGHT + 1
+    for *y in 0;border;1
+        *x1 @int NET_X_SHIFT
+        *y1 @int y * CELL_SIZE + NET_Y_SHIFT
+        *x2 @int NET_WIDTH * CELL_SIZE + NET_X_SHIFT
+        *y2 @int y * CELL_SIZE + NET_Y_SHIFT
+        graph.renderer @sdl:render_draw_line x1 y1 x2 y2
+
+def set_color
+    mref clr:SDL_Color
+    cref r:int g:int b:int
+    clr.r = r
+    clr.g = g
+    clr.b = b
+    clr.a = 255
+
+def fill_colors
+    mref colors:array|SDL_Color
+    # red
+    for *i in 0;4;1
+        *r @int i * 40 + 135
+        *g @int i * i * 10 + 10
+        *b @int i * i * 10 + 10
+        colors|* @set_color r g b 
+    # pink
+    for *i in 0;4;1
+        *r @int i * 40 + 135
+        *g @int i * i * 5 + 10
+        *b @int i * i * 10 + 120
+        colors|* @set_color r g b 
+    # orange
+    for *i in 0;4;1
+        *r @int i * 50 + 105
+        *g @int i * 30 + 80
+        *b @int 0
+        colors|* @set_color r g b
+    # brown
+    for *i in 0;4;1
+        *r @int i * 50 + 105
+        *g @int i * 40 + 80
+        *b @int i * 40 + 70
+        colors|* @set_color r g b
+    # golden yellow
+    for *i in 0;4;1
+        *r @int i * 50 + 105
+        *g @int i * 45 + 105
+        *b @int i * 25 + 20
+        colors|* @set_color r g b
+    # lemon yellow
+    for *i in 0;4;1
+        *r @int i * 40 + 105
+        *g @int i * 40 + 135
+        *b @int i * 30 + 70
+        colors|* @set_color r g b
+    # green
+    for *i in 0;4;1
+        *r @int i * 20
+        *g @int i * 50 + 105
+        *b @int i * 20
+        colors|* @set_color r g b 
+    # olive
+    for *i in 0;4;1
+        *r @int i * 30 + 70
+        *g @int i * 50 + 85
+        *b @int i * 5
+        colors|* @set_color r g b 
+    # blue
+    for *i in 0;4;1
+        *r @int i * i 5 + 20
+        *g @int i * i 15 + 40
+        *b @int i * 50 + 105
+        colors|* @set_color r g b
+    # cyan
+    for *i in 0;4;1
+        *r @int i * 20
+        *g @int i * 60 + 75
+        *b @int i * 60 + 75
+        colors|* @set_color r g b
+    # purple
+    for *i in 0;4;1
+        *r @int i * 35 + 110
+        *g @int i * 30 + 15
+        *b @int i * 50 + 105
+        colors|* @set_color r g b
+    # violet
+    for *i in 0;4;1
+        *r @int i * 35 + 80
+        *g @int i * 35 + 10
+        *b @int i * 60 + 75
+        colors|* @set_color r g b
+    # black and grey
+    for *i in 0;7;1
+        *r @int i * 35
+        *g @int i * 35
+        *b @int i * 35
+        colors|* @set_color r g b
+    # white
+    colors|* @set_color 255 255 255
+    #light
+    for *i in 1;5;1
+        *r @int i * 20 + 170
+        *g @int 250
+        *b @int i * -20 + 250
+        colors|* @set_color r g b
+    for *i in 1;5;1
+        *r @int 255
+        *g @int i * -20 + 255
+        *b @int i * 20 + 175
+        colors|* @set_color r g b
+            
+const PALETTE_WIDTH @int 8
+const PALETTE_HEIGHT @int 8
+const PALETTE_X_SHIFT @int 35
+const PALETTE_Y_SHIFT @int 100
+const PALETTE_CELL_SIZE @int 10
+
+def draw_palette
+    mref graph:Graph
+    cref selectedColor:int selectedColorRight:int
+    *index @int 0
+    for *x in 0;PALETTE_WIDTH;1
+        for *y in 0;PALETTE_HEIGHT;1
+            *x1 @int x * PALETTE_CELL_SIZE + PALETTE_X_SHIFT
+            *y1 @int y * PALETTE_CELL_SIZE + PALETTE_Y_SHIFT
+            *fillRect @SDL_Rect x1$i32 y1$i32 PALETTE_CELL_SIZE$i32 PALETTE_CELL_SIZE$i32
+            *r @int x * 20
+            *g @int y * 20
+            *b @int x * y * 10
+            graph.renderer @sdl:set_render_draw_color graph.colors|index|.r graph.colors|index|.g graph.colors|index|.b 0xFF
+            graph.renderer @sdl:render_fill_rect fillRect
+            index + 1
+    *yRectShift @i32 PALETTE_Y_SHIFT + 80 + 10
+    *leftColorRect @SDL_Rect PALETTE_X_SHIFT yRectShift 40 20
+    graph.renderer @sdl:set_render_draw_color graph.colors|selectedColor|.r graph.colors|selectedColor|.g graph.colors|selectedColor|.b 0xFF
+    graph.renderer @sdl:render_fill_rect leftColorRect
+    graph.renderer @sdl:set_render_draw_color 250 250 250 0xFF
+    graph.renderer @sdl:render_draw_rect leftColorRect
+    *xRightRect @i32 PALETTE_X_SHIFT + 40
+    *rightColorRect @SDL_Rect xRightRect yRectShift 40 20
+    graph.renderer @sdl:set_render_draw_color graph.colors|selectedColorRight|.r graph.colors|selectedColorRight|.g graph.colors|selectedColorRight|.b 0xFF
+    graph.renderer @sdl:render_fill_rect rightColorRect
+    graph.renderer @sdl:set_render_draw_color 250 250 250 0xFF
+    graph.renderer @sdl:render_draw_rect rightColorRect
+
+
+def draw_picture
+    mref graph:Graph
+    cref picture:array|u8
+    for *x in 0;NET_WIDTH;1
+        for *y in 0;NET_HEIGHT;1
+            *index @int y * NET_WIDTH + x
+            if > picture|index -1
+                *x1 @int x * CELL_SIZE + NET_X_SHIFT
+                *y1 @int y * CELL_SIZE + NET_Y_SHIFT
+                *fillRect @SDL_Rect x1$i32 y1$i32 CELL_SIZE$i32 CELL_SIZE$i32
+                *idx @int picture|index
+                graph.renderer @sdl:set_render_draw_color graph.colors|idx|.r graph.colors|idx|.g graph.colors|idx|.b 0xFF
+                graph.renderer @sdl:render_fill_rect fillRect
+
+
+const SMALL_PICTURE_SHIFT @int 34
+
+def draw_small_picture
+    mref graph:Graph
+    cref picture:array|u8
+    *outlinedRect @SDL_Rect SMALL_PICTURE_SHIFT 9 82 82
+    graph.renderer @sdl:set_render_draw_color 0xFF 0xFF 0xFF 0xFF
+    graph.renderer @sdl:render_draw_rect outlinedRect
+    for *x in 0;NET_WIDTH;1
+        for *y in 0;NET_HEIGHT;1
+            *index @int y * NET_WIDTH + x
+            if > picture|index -1
+                *x1 @int x + SMALL_PICTURE_SHIFT + 1
+                *y1 @int y + 10
+                *idx @int picture|index
+                graph.renderer @sdl:set_render_draw_color graph.colors|idx|.r graph.colors|idx|.g graph.colors|idx|.b 0xFF
+                graph.renderer @sdl:render_draw_point x1 y1
+
+
+def _get_place
+    mref id:string
+    cref graph:Graph xPos:int yPos:int
+    id = ""
+    *xBorder @int CELL_SIZE * NET_WIDTH + NET_X_SHIFT
+    *yBorder @int CELL_SIZE * NET_HEIGHT + NET_Y_SHIFT
+    *onPicture @bool true
+    onPicture? > xPos NET_X_SHIFT < xPos xBorder > yPos NET_Y_SHIFT < yPos yBorder
+    if onPicture
+        id = "picture"
+        return
+    xBorder = PALETTE_CELL_SIZE * PALETTE_WIDTH + PALETTE_X_SHIFT
+    yBorder = PALETTE_CELL_SIZE * PALETTE_HEIGHT + PALETTE_Y_SHIFT
+    *onPalette @bool true
+    onPalette? > xPos PALETTE_X_SHIFT < xPos xBorder > yPos PALETTE_Y_SHIFT < yPos yBorder
+    if onPalette
+        id = "palette"
+        return
+    for *button in graph.buttons
+        *right @i32 button.x + button.width
+        *bottom @i32 button.y + button.height
+        *onButton @bool true
+        onButton? > xPos button.x < xPos right > yPos button.y < yPos bottom
+        if onButton
+            id = button.id
+            return
+
+def change_button_state  
+    mref graph:Graph
+    cref id:string
+    for *button in graph.buttons
+        if button.id id
+            button.checked = true
+        else
+            button.checked = false
+        
+
+def get_state
+    mref xPos:int yPos:int id:string leftButton:bool quitFlag:bool
+    cref graph:Graph
+    *e @Event
+    *res @int 0
+    res e @sdl:poll_event
+    if e.type SDL_QUIT
+        quitFlag = true
+        return
+    xPos = -1
+    yPos = -1
+    *mouseState @u32 0
+    *xTemp @int 0
+    *yTemp @int 0
+    mouseState xTemp yTemp @sdl:get_mouse_state
+    id = ""
+    if mouseState
+        id @_get_place graph xTemp yTemp
+        if id "picture"
+            xPos = xTemp - NET_X_SHIFT / CELL_SIZE
+            yPos = yTemp - NET_Y_SHIFT / CELL_SIZE
+        elif id "palette"
+            xPos = xTemp - PALETTE_X_SHIFT / PALETTE_CELL_SIZE
+            yPos = yTemp - PALETTE_Y_SHIFT / PALETTE_CELL_SIZE
+        if & mouseState SDL_BUTTON_LMASK
+            leftButton = true
+        elif & mouseState SDL_BUTTON_RMASK
+            leftButton = false
+    if id ""
+        if e.type SDL_WINDOWEVENT
+            id = "window event"
+    @delay 1
+
+def delay
+    cref delay:int
+    @time:ms_sleep delay
+    
+def ms_clock
+    mref clock:int
+    clock @time:ms_clock

@@ -329,9 +329,41 @@ string do_for_stmt_routine(vector<string> &tokens)
     return outline;
 }
 
+void do_type_inference(vector<string> &tokens)
+{
+    if(tokens.size())
+    {
+        if(is_string(tokens[0]))
+        {
+            tokens.insert(tokens.begin(), "@string");
+        }
+        else if(is_int(tokens[0]))
+        {
+            tokens.insert(tokens.begin(), "@int");
+        }
+        else if(is_double(tokens[0]))
+        {
+            tokens.insert(tokens.begin(), "@double");
+        }
+        else if(is_bool(tokens[0]))
+        {
+            tokens.insert(tokens.begin(), "@bool");
+        }
+        else if(tokens[0] == "@to_string")
+        {
+            tokens.insert(tokens.begin(), "@string");
+        }
+        else if(tokens[0] == "@size")
+        {
+            tokens.insert(tokens.begin(), "@int");
+        }
+    }
+}
+
 
 string do_constructor(const string & varName, vector<string> & tokens)
 {
+    do_type_inference(tokens);
     string outline = "";
 
     vector<vector<string> > argsList;

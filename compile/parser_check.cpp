@@ -30,6 +30,23 @@ bool is_string(string token)
     return (token.at(0) == '\"') || (token.at(0) == '\'');
 }
 
+bool is_int(const string& token)
+{
+    return (token.size() > 0) && (token.find_first_not_of( "0123456789" ) == std::string::npos);
+}
+
+bool is_double(const string& token)
+{
+    std::istringstream iss(token);
+    double d;
+    return (iss >> std::noskipws >> d)  && iss.eof();
+}
+
+bool is_bool(const string& token)
+{
+    return (token == "true") || (token == "false");
+}
+
 string check_enum(string res)
 {
     size_t pos = res.find('^');

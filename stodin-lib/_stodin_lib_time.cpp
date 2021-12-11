@@ -13,7 +13,7 @@ namespace _stodin_lib_time
         res = static_cast<int64_t>(t);
     }
     
-    void ms_click(int64_t & res)
+    void ms_clock(int64_t & res)
     {
         clock_t t = clock();
         res = static_cast<int64_t>(t) / (static_cast<int64_t>(CLOCKS_PER_SEC / 1000));
@@ -22,5 +22,10 @@ namespace _stodin_lib_time
     void ms_sleep(const int64_t delta)
     {
         std::this_thread::sleep_for (std::chrono::milliseconds(delta));
+    }
+    
+    void us_sleep(const int64_t delta)
+    {
+        std::this_thread::sleep_for (std::chrono::microseconds(delta));
     }
 }

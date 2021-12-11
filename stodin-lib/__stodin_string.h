@@ -64,6 +64,7 @@ class __stodin_string
         friend void getline (__stodin_string& str, __stodin_bool flag);
 
         friend void size(int64_t & sz, const __stodin_string & str);
+        friend void utf8_size(int64_t & sz, const __stodin_string & str);
         friend void empty(__stodin_bool &res, const __stodin_string& str) noexcept;
         friend void clear(__stodin_string & str);
 

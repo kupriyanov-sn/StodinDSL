@@ -114,14 +114,14 @@ void copy_lib_to_output(string outPath, string fileName)
 
 }
 
-static bool _get_long_line(ifstream & source, string &line)
+static bool _get_long_line(ifstream & source, string &line, int & counter)
 {
     line = "";
     if(getline(source, line))
     {
         while(line.size() && (isspace(line.back())))
             line.pop_back();
-        while(line.size() && (line.back() == '\\') && (line.find('#') == string::npos))
+        while(line.size() && (line.back() == '\\'))// && (line.find('#') == string::npos))
         {
             line.pop_back();
             string s;
@@ -130,11 +130,12 @@ static bool _get_long_line(ifstream & source, string &line)
                 while(s.size() && (isspace(s.back())))
                     s.pop_back();
                 line += s;
+                counter++;
             }
             else
                 break;
         }
-        while(line.size() && (line.back() == ';') && (line.find('#') == string::npos))
+        while(line.size() && (line.back() == ';'))// && (line.find('#') == string::npos))
         {
             string s;
             if(getline(source, s))
@@ -142,6 +143,7 @@ static bool _get_long_line(ifstream & source, string &line)
                 while(s.size() && (isspace(s.back())))
                     s.pop_back();
                 line += s;
+                counter++;
             }
             else
                 break;
@@ -171,7 +173,7 @@ bool create_module(const string &name, const string & inPath, const string & out
     if(updateFlag)
         dest << get_begin_lines(name);
     int counter = 1;
-    while(_get_long_line(source, line))
+    while(_get_long_line(source, line, counter))
     {
         parser_error::set_line(name, counter);
         //cout << name << ": " << counter << endl;

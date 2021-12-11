@@ -188,8 +188,6 @@ void __stodin_rem(T0 & res, const T1 ta)
 template <typename T0, typename T1>
 void __stodin_lshift(T0 & res, const T1 a)
 {
-    if(!numeric_limits<T0>::is_integral::value)
-        throw domain_error("Value is not integral!");
     if(a < 0 || res < 0)
         throw domain_error("Left shift error. Sign is incorrect!");
     if ((a >= numeric_limits<T0>::digits) ||
