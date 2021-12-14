@@ -23,20 +23,23 @@ def save_picture
     
 def load_picture
     mref picture:array|u8
-    picture @clear @resize 6400
-    *inFile @file @set_mode "r" @open DEFAULT_PATH
-    *lines @array|string 
-    lines inFile @getlines
-    *index @int 0
-    for *line in lines
-        for *ch in line
-            ch - "0"
-            picture|index = ch$int
-            index + 1
-        *sz @int @size line
-        *psz @int ^graph:NET_WIDTH - sz
-        index + psz
-    inFile @close 
+    try
+        *inFile @file @set_mode "r" @open DEFAULT_PATH
+        picture @clear @resize 6400
+        *lines @array|string 
+        lines inFile @getlines
+        *index @int 0
+        for *line in lines
+            for *ch in line
+                ch - "0"
+                picture|index = ch$int
+                index + 1
+            *sz @int @size line
+            *psz @int ^graph:NET_WIDTH - sz
+            index + psz
+        inFile @close
+    catch runtime_error
+        for 0
     
 def set_picture_pixel
     mref picture:array|u8
@@ -51,12 +54,6 @@ def fill_line
     if x0 -1
         picture @set_picture_pixel x1 y1 colorIndex
         return    
-    if x0 x1
-        if y0 y1 
-            picture @set_picture_pixel x1 y1 colorIndex
-            return    
-    *deltaX @int x1 - x0 @math:abs
-    *deltaY @int y1 - y0 @math:abs
     *dirY @int 0
     if > y0 y1
         dirY = -1
@@ -67,6 +64,22 @@ def fill_line
         dirX = -1 
     if < x0 x1
         dirX = 1 
+    if x0 x1
+        if y0 y1 
+            picture @set_picture_pixel x1 y1 colorIndex
+            return
+        else
+            for *yn @int in y0;y1;dirY
+                picture @set_picture_pixel x1 yn colorIndex
+            picture @set_picture_pixel x1 y1 colorIndex
+            return
+    elif y0 y1
+        for *xn @int in x0;x1;dirX
+            picture @set_picture_pixel xn y1 colorIndex
+        picture @set_picture_pixel x1 y1 colorIndex
+        return        
+    *deltaX @int x1 - x0 @math:abs
+    *deltaY @int y1 - y0 @math:abs
     if > deltaX deltaY   
         *error @int 0
         *deltaError @int deltaY + 1
@@ -360,7 +373,6 @@ def main
         *delta @int clock - oldClock
         *needToRewrite @bool >= delta 20
         needToRewrite? != id ""
-        needToRewrite!? >= delta 1000
         if needToRewrite
             oldClock = clock
             graph @clear_background
@@ -369,6 +381,9 @@ def main
             graph @draw_net
             graph @draw_palette colorIndex colorIndexRight
             graph @draw_buttons
+            graph @repaint
+        elif >= delta 1000
+            oldClock = clock
             graph @repaint
     graph @close    
         

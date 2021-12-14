@@ -478,6 +478,7 @@ int main(int argc, char** argv)
             create_makefile(completedModules, libObjectModules, cppObjectModules, inPath, outPath, mainFile);
             bool runFlag = std::find(flags.begin(), flags.end(), string("-run")) != flags.end();
 #ifdef _WIN32
+            remove(join(inPath, mainFile + ".exe").c_str());
             int sysRes = system(("cd /D " + outPath + " && " + cfg.makeTool + " -f " +
                    join(outPath, "Makefile") + " all").c_str());
             if(!sysRes && runFlag) system(join(inPath, mainFile + ".exe").c_str() );

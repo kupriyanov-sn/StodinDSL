@@ -299,12 +299,23 @@ string do_for_stmt_routine(vector<string> &tokens)
         }
         if((tokens.size() == 8) && (tokens.at(2) == "in") && (tokens.at(4) == ";")) // for *a @int in begin;end;step
         {
-            string initVal = tokens.at(3);
-            string lastVal = tokens.at(5);
+            string initVal = check_aggregate(tokens.at(3));
+            string lastVal = check_aggregate(tokens.at(5));
             string incVal = tokens.at(7);
-            string compareStr = incVal[0] == '-' ? " > " : " < ";
-            outline += "for(" + newVarType + " " + varName + " = " + check_aggregate(initVal) + "; " +
-                       varName + compareStr + check_aggregate(lastVal) + "; " + varName + " += " + incVal + "){";
+            if(is_int(incVal))
+            {
+               string compareStr = incVal[0] == '-' ? " > " : " < ";
+               outline += "for(" + newVarType + " " + varName + " = " + initVal + "; " +
+                          varName + compareStr + lastVal + "; " + varName + " += " + incVal + "){";
+                
+            }
+            else
+            {
+                incVal = check_aggregate(incVal);
+                outline += "for(" + newVarType + " " + varName + " = " + initVal + "; " +
+                           "(" + lastVal + " - " + initVal + ") /" + incVal +  " > " + "(" + varName + " - " + initVal + ") /" + incVal + "; " + varName + " += " + incVal + "){";
+                
+            }
         }
         else if((tokens.size() == 4) && (tokens.at(2)== "in")) // for *a @int in arr
         {
@@ -633,11 +644,22 @@ string do_statement_routine(vector<string> &tokens, size_t indents, const vector
     }
     else if (stmtName == "catch")
     {
-        outline += "catch(" + tokens.at(1) + "& " + tokens.at(2) + "){";
+        if(tokens.size() > 2)
+        {
+            outline += "catch(" + tokens.at(1) + "& " + tokens.at(2) + "){";
+        }
+        else if (tokens.size() == 2)
+        {
+            outline += "catch(" + tokens.at(1) + "& " + "){";
+        }
+        else
+        {
+            outline += "catch(...){";
+        }
         if(traceFlag)
         {
             outline += "if(__stodinTrace.size())__stodinTrace.pop_back();";
-        }
+        }            
 
     }
     else if (stmtName == "throw")

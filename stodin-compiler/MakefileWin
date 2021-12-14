@@ -1,6 +1,6 @@
-PATH=.;C:\Program Files\CodeBlocks\MinGW\bin;C:\Program Files\CodeBlocks\MinGW;
+PATH=.;C:\mingw64\bin;C:\mingw64;
 SHELL = cmd.exe
-CC="C:\Program Files\CodeBlocks\MinGW\bin\g++.exe"
+CC="C:\mingw64\bin\g++.exe"
 CFLAGS= -std=c++14 -Wall -fexceptions -std=c++14  -c 
 LIBS=
 LFLAGS= -static-libstdc++ -static-libgcc -static -s

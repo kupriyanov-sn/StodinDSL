@@ -32,7 +32,9 @@ bool is_string(string token)
 
 bool is_int(const string& token)
 {
-    return (token.size() > 0) && (token.find_first_not_of( "0123456789" ) == std::string::npos);
+    std::istringstream iss(token);
+    int64_t d;
+    return (iss >> std::noskipws >> d)  && iss.eof();
 }
 
 bool is_double(const string& token)

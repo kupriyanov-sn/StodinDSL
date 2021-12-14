@@ -363,7 +363,7 @@ def get_state
     res e @sdl:poll_event
     if e.type SDL_QUIT
         quitFlag = true
-        return
+        return        
     xPos = -1
     yPos = -1
     *mouseState @u32 0
@@ -376,13 +376,24 @@ def get_state
         if id "picture"
             xPos = xTemp - NET_X_SHIFT / CELL_SIZE
             yPos = yTemp - NET_Y_SHIFT / CELL_SIZE
-        elif id "palette"
-            xPos = xTemp - PALETTE_X_SHIFT / PALETTE_CELL_SIZE
-            yPos = yTemp - PALETTE_Y_SHIFT / PALETTE_CELL_SIZE
+        else
+            id = ""
         if & mouseState SDL_BUTTON_LMASK
             leftButton = true
         elif & mouseState SDL_BUTTON_RMASK
             leftButton = false
+    elif e.type SDL_MOUSEBUTTONUP
+        id @_get_place graph xTemp yTemp
+        if id "picture"
+            id = ""
+        elif id "palette"
+            xPos = xTemp - PALETTE_X_SHIFT / PALETTE_CELL_SIZE
+            yPos = yTemp - PALETTE_Y_SHIFT / PALETTE_CELL_SIZE
+        if e.button.button SDL_BUTTON_LEFT
+            leftButton = true
+        elif e.button.button SDL_BUTTON_RIGHT
+            leftButton = false
+        
     if id ""
         if e.type SDL_WINDOWEVENT
             id = "window event"
