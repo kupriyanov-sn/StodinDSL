@@ -1,0 +1,43 @@
+def shift_symbol
+    mref code:uint index:uint
+    cref ch:string
+    if ch "#"
+        code | index
+    try
+        index << 1
+    catch domain_error e
+        return
+
+
+def load_symbols
+    *symbolsFile @file @set_mode "r" @open "symbols_64_vertical_7x9.txt"
+    *outFile @file @set_mode "w" @open "font_dict_7x9.txt"
+    *bom @string
+    bom symbolsFile @getline
+    for
+        *name @string ""
+        name symbolsFile @getline
+        if name ""
+            break
+        *code @uint 0
+        *index @uint 1
+        *shiftSymbol @string
+        shiftSymbol symbolsFile @getline
+        code index @shift_symbol shiftSymbol
+        for *i in 0;9;1
+            *s @string
+            s symbolsFile @getline
+            for *j in 0;7;1
+                *ch @string s|j
+                code index @shift_symbol ch
+        @print* name ": " code "\n"
+        *sCode @string @to_string code
+        if name in "\"" "\'" "\\"
+            outFile @write* "\"\\" name "\" " sCode "ULL;\n"
+        else
+            outFile @write* "\"" name "\" " sCode "ULL;\n"
+    symbolsFile @close        
+    outFile @close        
+
+def main
+    @load_symbols
